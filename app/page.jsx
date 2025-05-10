@@ -28,8 +28,8 @@ export default function Home() {
             <h2>Feautured Cars</h2>
             <Button>View All <ChevronRight className="ml-1 h-4 w-4"/></Button>
           </div>
-          
-          <div>
+
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
             {featuredCars.map((car) => {
               return <CarCard key={car.id} car={car}/>
             })}
