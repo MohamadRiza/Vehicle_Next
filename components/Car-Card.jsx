@@ -5,14 +5,18 @@ import { Card, CardContent } from "./ui/card";
 import Image from "next/image";
 import { CarIcon, Heart } from "lucide-react";
 import { Button } from "./ui/button";
+import { Badge } from "./ui/badge";
+import { useRouter } from "next/navigation";
 
 const CarCard = ({ car }) => {
   const [isSaved, setIsSaved] = useState(car.wishlisted);
 
+  const router = useRouter();
+
   const handleToggleSave = async (e) => {};
 
   return (
-    <Card className="overflow-hidden hower:shadow-lg transition group">
+    <Card className="overflow-hidden hower:shadow-lg transition group py-0">
       <div className="relative h-48">
         {car.images && car.images.length > 0 ? (
           <div>
@@ -59,6 +63,27 @@ const CarCard = ({ car }) => {
           <span>{car.transmission}</span>
           <span className="mx-2">●</span>
           <span>{car.fuelType}</span>
+        </div>
+
+        <div className="flex flex-wrap gap-1 mb-2">
+          <Badge variant="outline" className="bg-gray-50">
+            {car.bodyType}
+          </Badge>
+          <Badge variant="outline" className="bg-gray-50">
+            {car.mileage.toLocaleString()} miles
+          </Badge>
+          <Badge variant="outline" className="bg-gray-50">
+            {car.color}
+          </Badge>
+        </div>
+
+        <div className="flex justify-between">
+          <Button
+            className="flex-1"
+            onClick={() => router.push(`/cars/${car.id}`)}
+          >
+            View Car
+          </Button>
         </div>
       </CardContent>
     </Card>
