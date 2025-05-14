@@ -1,7 +1,13 @@
 import CarCard from "@/components/Car-Card";
 import HomeSearch from "@/components/Home-search";
+import {
+  Accordion,
+  AccordionContent,
+  AccordionItem,
+  AccordionTrigger,
+} from "@/components/ui/accordion";
 import { Button } from "@/components/ui/button";
-import { bodyTypes, carMakes, featuredCars } from "@/lib/data";
+import { bodyTypes, carMakes, faqItems, featuredCars } from "@/lib/data";
 import { Calendar, Car, ChevronRight, Shield } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
@@ -150,12 +156,31 @@ export default function Home() {
                     />
                   </div>
                   <div className="absolute inset-0 bg-gradient-to-t from-black/70 to-transparent rounded-lg flex items-end">
-                  <h3 className=" text-white text-xl font-bold pl-4 pb-2">{type.name}</h3>
+                    <h3 className=" text-white text-xl font-bold pl-4 pb-2">
+                      {type.name}
+                    </h3>
                   </div>
                 </Link>
               );
             })}
           </div>
+        </div>
+      </section>
+
+      <section className="py-12 bg-gray-50">
+        <div className="container mx-auto px-4">
+          <h2 className="text-2xl font-bold">Frequently asked questions</h2>
+
+          <Accordion type="single" collapsible className="w-full">
+            {faqItems.map((faq, index) => {
+              return (
+                <AccordionItem key={index} value={`item-${index}`}>
+                  <AccordionTrigger>{faq.question}</AccordionTrigger>
+                  <AccordionContent>{faq.answer}</AccordionContent>
+                </AccordionItem>
+              );
+            })}
+          </Accordion>
         </div>
       </section>
     </div>
