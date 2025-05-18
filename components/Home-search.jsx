@@ -6,6 +6,7 @@ import { Camera, Upload } from "lucide-react";
 import { Button } from "./ui/button";
 import { useDropzone } from "react-dropzone";
 import { toast } from "sonner";
+import { useRouter } from "next/navigation";
 
 const HomeSearch = () => {
   const [searchTerm, setSearchTerm] = useState("");
@@ -14,8 +15,25 @@ const HomeSearch = () => {
   const [searchImage, setSearchImage] = useState(null);
   const [isImageUploading, setIsUploading] = useState(false);
 
-  const handleTextSubmit = () => {};
-  const handleImageSearch = () => {};
+  const router = useRouter();
+  
+  const handleTextSubmit = (e) => {
+    e.preventDefault();
+    if (!searchTerm.trim()) {
+      toast.error("Please enter a search term");
+      return;
+    }
+    router.push(`/cars?search=${encodeURIComponent(searchTerm)}`);
+  };
+
+  const handleImageSearch = async (e) => {
+    e.preventDefault();
+    if (!searchImage) {
+      toast.error("Please upload an image");
+      return;
+    }
+    // add ai logi here
+  };
 
   const onDrop = (acceptedFiles) => {
     const file = acceptedFiles[0];
@@ -121,6 +139,15 @@ const HomeSearch = () => {
                 </div>
               )}
             </div>
+            {imagePreview && (
+              <Button
+                type="submit"
+                className="w-full mt-2"
+                disabled={isImageUploading}
+              >
+                {isImageUploading ? "Uploading..." : "Search with this image"}
+              </Button>
+            )}
           </form>
         </div>
       )}
