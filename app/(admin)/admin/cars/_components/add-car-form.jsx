@@ -225,7 +225,56 @@ const AddCarForm = () => {
                       </p>
                     )}
                   </div>
+
+                  <div className="space-y-2">
+                    <Label htmlFor="transmission">Transmission</Label>
+
+                    <Select onValueChange={value=>setValue("transmission", value)} defaultValue={getValues("transmission")}>
+                      <SelectTrigger
+                        className={errors.transmission ? "border-red-500" : ""}
+                      >
+                        <SelectValue placeholder="Select Transmission" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        {transmission.map((type) => {
+                        return <SelectItem key={type} value={type}>{type}</SelectItem>;
+                        })}
+                      </SelectContent>
+                    </Select>
+
+                    {errors.transmission && (
+                      <p className="text-xs text-red-500">
+                        {errors.transmission.message}
+                      </p>
+                    )}
+                  </div>
+
+                  <div className="space-y-2">
+                    <Label htmlFor="bodyType">Body Type</Label>
+
+                    <Select onValueChange={value=>setValue("bodyType", value)} defaultValue={getValues("bodyType")}>
+                      <SelectTrigger
+                        className={errors.bodyType ? "border-red-500" : ""}
+                      >
+                        <SelectValue placeholder="Select Body Type" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        {bodyType.map((type) => {
+                        return <SelectItem key={type} value={type}>{type}</SelectItem>;
+                        })}
+                      </SelectContent>
+                    </Select>
+
+                    {errors.bodyType && (
+                      <p className="text-xs text-red-500">
+                        {errors.bodyType.message}
+                      </p>
+                    )}
+                  </div>
+
                 </div>
+
+
               </form>
             </CardContent>
           </Card>
