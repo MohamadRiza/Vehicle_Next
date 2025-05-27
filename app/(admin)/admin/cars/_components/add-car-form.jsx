@@ -21,6 +21,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import { Textarea } from "@/components/ui/textarea";
 
 const fuelType = ["petrol", "Diesel", "Electric", "Hybrid", "Pug-in Hybrid"];
 const transmission = ["Automatic", "Manual", "Semi-Automatic"];
@@ -206,7 +207,10 @@ const AddCarForm = () => {
                   <div className="space-y-2">
                     <Label htmlFor="fuelType">Fuel Type</Label>
 
-                    <Select onValueChange={value=>setValue("fuelType", value)} defaultValue={getValues("fuelType")}>
+                    <Select
+                      onValueChange={(value) => setValue("fuelType", value)}
+                      defaultValue={getValues("fuelType")}
+                    >
                       <SelectTrigger
                         className={errors.fuelType ? "border-red-500" : ""}
                       >
@@ -214,7 +218,11 @@ const AddCarForm = () => {
                       </SelectTrigger>
                       <SelectContent>
                         {fuelType.map((type) => {
-                        return <SelectItem key={type} value={type}>{type}</SelectItem>;
+                          return (
+                            <SelectItem key={type} value={type}>
+                              {type}
+                            </SelectItem>
+                          );
                         })}
                       </SelectContent>
                     </Select>
@@ -229,7 +237,10 @@ const AddCarForm = () => {
                   <div className="space-y-2">
                     <Label htmlFor="transmission">Transmission</Label>
 
-                    <Select onValueChange={value=>setValue("transmission", value)} defaultValue={getValues("transmission")}>
+                    <Select
+                      onValueChange={(value) => setValue("transmission", value)}
+                      defaultValue={getValues("transmission")}
+                    >
                       <SelectTrigger
                         className={errors.transmission ? "border-red-500" : ""}
                       >
@@ -237,7 +248,11 @@ const AddCarForm = () => {
                       </SelectTrigger>
                       <SelectContent>
                         {transmission.map((type) => {
-                        return <SelectItem key={type} value={type}>{type}</SelectItem>;
+                          return (
+                            <SelectItem key={type} value={type}>
+                              {type}
+                            </SelectItem>
+                          );
                         })}
                       </SelectContent>
                     </Select>
@@ -252,7 +267,10 @@ const AddCarForm = () => {
                   <div className="space-y-2">
                     <Label htmlFor="bodyType">Body Type</Label>
 
-                    <Select onValueChange={value=>setValue("bodyType", value)} defaultValue={getValues("bodyType")}>
+                    <Select
+                      onValueChange={(value) => setValue("bodyType", value)}
+                      defaultValue={getValues("bodyType")}
+                    >
                       <SelectTrigger
                         className={errors.bodyType ? "border-red-500" : ""}
                       >
@@ -260,7 +278,11 @@ const AddCarForm = () => {
                       </SelectTrigger>
                       <SelectContent>
                         {bodyType.map((type) => {
-                        return <SelectItem key={type} value={type}>{type}</SelectItem>;
+                          return (
+                            <SelectItem key={type} value={type}>
+                              {type}
+                            </SelectItem>
+                          );
                         })}
                       </SelectContent>
                     </Select>
@@ -272,9 +294,56 @@ const AddCarForm = () => {
                     )}
                   </div>
 
+                  <div className="space-y-2">
+                    <Label htmlFor="seats">
+                      Number of Seats{" "}
+                      <span className="text-sm text-gray-500">(optional)</span>
+                    </Label>
+                    <Input
+                      id="seats"
+                      {...register("seats")}
+                      placeholder="e.g 5"
+                    />
+                  </div>
+
+                  <div className="space-y-2">
+                    <Label htmlFor="status">Status</Label>
+
+                    <Select
+                      onValueChange={(value) => setValue("status", value)}
+                      defaultValue={getValues("status")}
+                    >
+                      <SelectTrigger>
+                        <SelectValue placeholder="Select Status" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        {carStatus.map((status) => (
+                          <SelectItem key={status} value={status}>
+                            {status.charAt(0) + status.slice(1).toLowerCase()}
+                          </SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
+                  </div>
+
                 </div>
-
-
+                <div className="space-y-2">
+                  <Label htmlFor="description">Description</Label>
+                  <Textarea
+                    id="description"
+                    {...register("description")}
+                    placeholder="Enter detailed descriptions of the car..."
+                    className={`min-h-32 ${
+                      errors.description ? "border-red-500" : ""
+                    }`}
+                  />
+                  {errors.description && (
+                    <p className="text-xs text-red-500">
+                      {errors.description.message}
+                    </p>
+                  )}
+                </div>
+                
               </form>
             </CardContent>
           </Card>
