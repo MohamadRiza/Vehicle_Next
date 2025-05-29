@@ -97,7 +97,7 @@ const AddCarForm = () => {
   });
 
   const onSubmit = async (data) => {
-    if(uploadedImages.length === 0) {
+    if (uploadedImages.length === 0) {
       setImageError("At least one image is required");
       return;
     }
@@ -117,7 +117,7 @@ const AddCarForm = () => {
     const newImages = [];
     ValidFiles.forEach((file) => {
       const reader = new FileReader();
-      reader.onloadend = () => {
+      reader.onload = (e) => {
         newImages.push(e.target.result);
 
         if (newImages.length === ValidFiles.length) {
@@ -419,23 +419,25 @@ const AddCarForm = () => {
                     {imageError && <span className="text-red-500">*</span>}
                   </Label>
 
-                  <div {...getMultiImageRootProps()} className="cursor-pointer">
+                  <div
+                    {...getMultiImageRootProps()}
+                    className={`border-2 border-dashed rounded-lg p-6 text-center cursor-pointer hover:bg-gray-50 transition mt-2 ${
+                      imageError ? "border-red-500" : "border-gray-300"
+                    }`}
+                  >
                     <input {...getMultiImageInputProps()} />
-                    <div className="flex flex-col items-center">
-                      <Upload className="h-12 w-12 text-gray-400 mb-12" />
-                      <p className="text-gray-600 mb-2">
-                        
-                          Drag & drop a car image here or click to select multiple images
+                    <div className="flex flex-col items-center justify-center">
+                      <Upload className="h-12 w-12 text-gray-400 mb-3" />
+                      <p className="text-gray-600 mb-2 text-sm">
+                        Drag & drop a car image here or click to select multiple
+                        images
                       </p>
-                      <p className="text-gray-400 text-sm">
-                        Supports: JPG, PNG, WebP, (Max 5MB each)
+                      <p className="text-gray-500 text-xs m-1">
+                        Supports: JPG, PNG, WebP (Max 5MB each)
                       </p>
                     </div>
                   </div>
-
-                  <div>
-                    <div></div>
-                  </div>
+                  {imageError && (<p className="text-xs text-red-500 mt-1">{imageError}</p>)}
                 </div>
               </form>
             </CardContent>
