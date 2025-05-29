@@ -19,13 +19,16 @@ const CarsList = () => {
 
   return (
     <div className="space-y-4">
-      <div className="flex flex-col sm:flex-row gap-4 items-start sm:items-center justify-between">
-        <Button
-          onClick={() => router.push("/admin/cars/create")}
-          className="flex items-center cursor-pointer"
-        >
-          <Plus className="h-4 w-4" /> Add Car
-        </Button>
+      <div className="flex flex-col sm:flex-row gap-4 items-stretch sm:items-center justify-between">
+        <div className="w-full sm:w-auto"> 
+          {/* above  changed for mobile view (w-full sm:w-auto) */}
+          <Button
+            onClick={() => router.push("/admin/cars/create")}
+            className="flex items-center cursor-pointer w-full sm:w-auto"
+          >
+            <Plus className="h-4 w-4" /> Add Car
+          </Button>
+        </div>
 
         <form onSubmit={handleSearchSubmit} className="flex w-full sm:w-auto">
           <div className="relative flex-1">

@@ -22,6 +22,10 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { Textarea } from "@/components/ui/textarea";
+import { Checkbox } from "@/components/ui/checkbox";
+import { useDropzone } from "react-dropzone";
+import { toast } from "sonner";
+import { Upload } from "lucide-react";
 
 const fuelType = ["petrol", "Diesel", "Electric", "Hybrid", "Pug-in Hybrid"];
 const transmission = ["Automatic", "Manual", "Semi-Automatic"];
@@ -39,6 +43,9 @@ const carStatus = ["AVAILABLE", "UNAVAILABLE", "SOLD"];
 
 const AddCarForm = () => {
   const [activeTab, setActiveTab] = useState("ai");
+
+  const [uploadedImages, setUploadedImages] = useState([]);
+  const [imageError, setImageError] = useState("");
 
   const carFormsSchema = z.object({
     make: z.string().min(1, "make is requeired"),
@@ -89,7 +96,51 @@ const AddCarForm = () => {
     },
   });
 
-  const onSubmit = async (data) => {};
+  const onSubmit = async (data) => {
+    if(uploadedImages.length === 0) {
+      setImageError("At least one image is required");
+      return;
+    }
+  };
+
+  const onMultiImageDrop = (acceptedFiles) => {
+    const ValidFiles = acceptedFiles.filter((file) => {
+      if (file.size > 5 * 1024 * 1024) {
+        toast.error(`${file.name}exceeds the 5MB limit, and will be skipped.`);
+        return false;
+      }
+      return true;
+    });
+
+    if (ValidFiles.length === 0) return;
+
+    const newImages = [];
+    ValidFiles.forEach((file) => {
+      const reader = new FileReader();
+      reader.onloadend = () => {
+        newImages.push(e.target.result);
+
+        if (newImages.length === ValidFiles.length) {
+          setUploadedImages((prev) => [...prev, ...newImages]);
+          setImageError("");
+          toast.success(`Successfully uploaded ${ValidFiles.length} images`);
+        }
+      };
+
+      reader.readAsDataURL(file);
+    });
+  };
+
+  const {
+    getRootProps: getMultiImageRootProps,
+    getInputProps: getMultiImageInputProps,
+  } = useDropzone({
+    onDrop: onMultiImageDrop,
+    accept: {
+      "image/*": [".jpeg", ".png", ".jpg", ".webp"],
+    },
+    multiple: true,
+  });
 
   return (
     <div>
@@ -325,7 +376,6 @@ const AddCarForm = () => {
                       </SelectContent>
                     </Select>
                   </div>
-
                 </div>
                 <div className="space-y-2">
                   <Label htmlFor="description">Description</Label>
@@ -343,7 +393,50 @@ const AddCarForm = () => {
                     </p>
                   )}
                 </div>
-                
+
+                <div className="flex items-start space-x-3 space-y-0 rounded-md border p-4">
+                  <Checkbox
+                    id="feautured"
+                    checked={watch("feautured")}
+                    onCheckedChange={(checked) => {
+                      setValue("feautured", checked);
+                    }}
+                  />
+                  <div className="space-y-1 leading-none">
+                    <Label htmlFor="feautured">Feature this car</Label>
+                    <p className="text-sm text-gray-500">
+                      Featured cars appears on the homepage
+                    </p>
+                  </div>
+                </div>
+
+                <div>
+                  <Label
+                    htmlFor="images"
+                    className={imageError ? "text-red-500" : ""}
+                  >
+                    Images{" "}
+                    {imageError && <span className="text-red-500">*</span>}
+                  </Label>
+
+                  <div {...getMultiImageRootProps()} className="cursor-pointer">
+                    <input {...getMultiImageInputProps()} />
+                    <div className="flex flex-col items-center">
+                      <Upload className="h-12 w-12 text-gray-400 mb-12" />
+                      <p className="text-gray-600 mb-2">
+                        
+                          Drag & drop a car image here or click to select multiple images
+                      </p>
+                      <p className="text-gray-400 text-sm">
+                        Supports: JPG, PNG, WebP, (Max 5MB each)
+                      </p>
+                    </div>
+                  </div>
+
+                  <div>
+                    <div></div>
+                  </div>
+                </div>
               </form>
             </CardContent>
           </Card>
