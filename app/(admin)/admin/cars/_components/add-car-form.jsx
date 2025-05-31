@@ -25,7 +25,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { Checkbox } from "@/components/ui/checkbox";
 import { useDropzone } from "react-dropzone";
 import { toast } from "sonner";
-import { Upload, X } from "lucide-react";
+import { Loader2, Upload, X } from "lucide-react";
 import Image from "next/image";
 import { Button } from "@/components/ui/button";
 
@@ -146,7 +146,7 @@ const AddCarForm = () => {
 
   const removeImage = (index) => {
     setUploadedImages((prev) => prev.filter((_, i) => i !== index));
-  }
+  };
 
   return (
     <div>
@@ -450,7 +450,9 @@ const AddCarForm = () => {
 
                 {uploadedImages.length > 0 && (
                   <div className="mt-4">
-                    <h3 className="text-sm font-medium mb-2">Uploaded Images ({uploadedImages.length})</h3>
+                    <h3 className="text-sm font-medium mb-2">
+                      Uploaded Images ({uploadedImages.length})
+                    </h3>
                     <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-4">
                       {uploadedImages.map((image, index) => {
                         return (
@@ -470,7 +472,7 @@ const AddCarForm = () => {
                               className="absolute top-1 right-1 h-6 w-6 opacity-0 group-hover:opacity-100 transition-opacity"
                               onClick={() => removeImage(index)}
                             >
-                              <X className="h-3 w-3"/>
+                              <X className="h-3 w-3" />
                             </Button>
                           </div>
                         );
@@ -478,6 +480,17 @@ const AddCarForm = () => {
                     </div>
                   </div>
                 )}
+
+                <Button type="submit" className="w-full md:w-auto" disabled={true}>
+                  {true ? (
+                    <>
+                      <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                      Adding Cars...
+                    </>
+                  ) : (
+                    "Add Car"
+                  )}
+                </Button>
               </form>
             </CardContent>
           </Card>
