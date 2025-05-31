@@ -25,7 +25,9 @@ import { Textarea } from "@/components/ui/textarea";
 import { Checkbox } from "@/components/ui/checkbox";
 import { useDropzone } from "react-dropzone";
 import { toast } from "sonner";
-import { Upload } from "lucide-react";
+import { Upload, X } from "lucide-react";
+import Image from "next/image";
+import { Button } from "@/components/ui/button";
 
 const fuelType = ["petrol", "Diesel", "Electric", "Hybrid", "Pug-in Hybrid"];
 const transmission = ["Automatic", "Manual", "Semi-Automatic"];
@@ -141,6 +143,10 @@ const AddCarForm = () => {
     },
     multiple: true,
   });
+
+  const removeImage = (index) => {
+    setUploadedImages((prev) => prev.filter((_, i) => i !== index));
+  }
 
   return (
     <div>
@@ -437,8 +443,41 @@ const AddCarForm = () => {
                       </p>
                     </div>
                   </div>
-                  {imageError && (<p className="text-xs text-red-500 mt-1">{imageError}</p>)}
+                  {imageError && (
+                    <p className="text-xs text-red-500 mt-1">{imageError}</p>
+                  )}
                 </div>
+
+                {uploadedImages.length > 0 && (
+                  <div className="mt-4">
+                    <h3 className="text-sm font-medium mb-2">Uploaded Images ({uploadedImages.length})</h3>
+                    <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-4">
+                      {uploadedImages.map((image, index) => {
+                        return (
+                          <div key={index} className="relative group">
+                            <Image
+                              src={image}
+                              alt={`Car Image ${index + 1}`}
+                              height={50}
+                              width={50}
+                              className="h-28 w-full object-cover rounded-md"
+                              priority
+                            />
+                            <Button
+                              type="button"
+                              size="icon"
+                              variant="destructive"
+                              className="absolute top-1 right-1 h-6 w-6 opacity-0 group-hover:opacity-100 transition-opacity"
+                              onClick={() => removeImage(index)}
+                            >
+                              <X className="h-3 w-3"/>
+                            </Button>
+                          </div>
+                        );
+                      })}
+                    </div>
+                  </div>
+                )}
               </form>
             </CardContent>
           </Card>
