@@ -103,25 +103,25 @@ const AddCarForm = () => {
   });
 
   const onAiDrop = (acceptedFiles) => {
-      const file = acceptedFiles[0];
-  
-      if (file) {
-        if (file.size > 5 * 1024 * 1024) {
-          toast.error("File size exceeds 5MB");
-          return;
-        }
-        
-        setUploadAiImage(file);
-  
-        const reader = new FileReader();
-        reader.onload = (e) => {
-          setImagePreview(e.target.result);
-          toast.success("Image uploaded successfully");
-        };
+    const file = acceptedFiles[0];
 
-        reader.readAsDataURL(file);
+    if (file) {
+      if (file.size > 5 * 1024 * 1024) {
+        toast.error("File size exceeds 5MB");
+        return;
       }
-    };
+
+      setUploadAiImage(file);
+
+      const reader = new FileReader();
+      reader.onload = (e) => {
+        setImagePreview(e.target.result);
+        toast.success("Image uploaded successfully");
+      };
+
+      reader.readAsDataURL(file);
+    }
+  };
 
   const { getRootProps: getAiRootProps, getInputProps: getAiInputProps } =
     useDropzone({
@@ -571,9 +571,44 @@ const AddCarForm = () => {
               <div className="space-y-6">
                 <div className="border-2 border-dashed rounded-lg p-6 text-center">
                   {imagePreview ? (
-                    <div className="flex flex-col items-center"></div>
+                    <div className="flex flex-col items-center">
+                      <img
+                        src={imagePreview}
+                        alt="Car Preview"
+                        className="max-h-56 max-w-full object-contain mb-4"
+                      />
+                      <div className="flex gap-2">
+                        <Button
+                          variant="outline"
+                          size="sm"
+                          onClick={() => {
+                            setImagePreview(null);
+                            setUploadAiImage(null);
+                          }}
+                        >
+                          Remove
+                        </Button>
+
+                        <Button size="sm">
+                          {true ?( 
+                          <>
+                          <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                          Processing...
+                          </>
+                          ) : (
+                            <>
+                            <Camera className="mr-2 h-4 w-4" />
+                            Extract Details
+                            </>
+                          )}
+                        </Button>
+                      </div>
+                    </div>
                   ) : (
-                    <div {...getAiRootProps()} className="cursor-pointer hover:bg-gray-50 transition">
+                    <div
+                      {...getAiRootProps()}
+                      className="cursor-pointer hover:bg-gray-50 transition"
+                    >
                       <input {...getAiInputProps()} />
                       <div className="flex flex-col items-center justify-center">
                         <Camera className="h-12 w-12 text-gray-400 mb-2" />
