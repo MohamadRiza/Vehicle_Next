@@ -7,6 +7,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import {
   Card,
+  CardAction,
   CardContent,
   CardDescription,
   CardHeader,
@@ -25,7 +26,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { Checkbox } from "@/components/ui/checkbox";
 import { useDropzone } from "react-dropzone";
 import { toast } from "sonner";
-import { Loader2, Upload, X } from "lucide-react";
+import { Camera, Loader2, Upload, X } from "lucide-react";
 import Image from "next/image";
 import { Button } from "@/components/ui/button";
 import useFetch from "@/hooks/user-fetch";
@@ -47,9 +48,10 @@ const carStatus = ["AVAILABLE", "UNAVAILABLE", "SOLD"];
 
 const AddCarForm = () => {
   const [activeTab, setActiveTab] = useState("ai");
-
   const [uploadedImages, setUploadedImages] = useState([]);
   const [imageError, setImageError] = useState("");
+  const [imagePreview, setImagePreview] = useState(null);
+  const [uploadAiImage, setUploadAiImage] = useState(null);
 
   const carFormsSchema = z.object({
     make: z.string().min(1, "make is requeired"),
@@ -100,18 +102,49 @@ const AddCarForm = () => {
     },
   });
 
+  const onAiDrop = (acceptedFiles) => {
+      const file = acceptedFiles[0];
+  
+      if (file) {
+        if (file.size > 5 * 1024 * 1024) {
+          toast.error("File size exceeds 5MB");
+          return;
+        }
+        
+        setUploadAiImage(file);
+  
+        const reader = new FileReader();
+        reader.onload = (e) => {
+          setImagePreview(e.target.result);
+          toast.success("Image uploaded successfully");
+        };
+
+        reader.readAsDataURL(file);
+      }
+    };
+
+  const { getRootProps: getAiRootProps, getInputProps: getAiInputProps } =
+    useDropzone({
+      onDrop: onAiDrop,
+      accept: {
+        "image/*": [".jpeg", ".png", ".jpg", ".webp"],
+      },
+      maxFiles: 1,
+      multiple: false,
+    });
+
   const {
     data: addCarResult,
     loading: addCarLoading,
     fn: addCarFn,
   } = useFetch(addCar);
 
-  useEffect(()=>{
-    if(addCarResult?.success){
+  useEffect(() => {
+    if (addCarResult?.success) {
       toast.success("Car Added Successfully");
       router.push("/admin/cars");
     }
-  },[addCarResult]);
+  }, [addCarResult, addCarLoading]);
 
   const onSubmit = async (data) => {
     if (uploadedImages.length === 0) {
@@ -125,11 +158,11 @@ const AddCarForm = () => {
       price: parseFloat(data.price),
       mileage: parseInt(data.mileage),
       seats: data.seats ? parseInt(data.seats) : null,
-    }
+    };
     await addCarFn({
       carData,
       image: uploadedImages,
-    })
+    });
   };
 
   const onMultiImageDrop = (acceptedFiles) => {
@@ -526,7 +559,38 @@ const AddCarForm = () => {
             </CardContent>
           </Card>
         </TabsContent>
-        <TabsContent value="ai">Change your password here.</TabsContent>
+        <TabsContent value="ai">
+          <Card>
+            <CardHeader>
+              <CardTitle>AI-Powered Car Details Extraction</CardTitle>
+              <CardDescription>
+                Upload an image of a car and let AI extract its details.
+              </CardDescription>
+            </CardHeader>
+            <CardContent>
+              <div className="space-y-6">
+                <div>
+                  {imagePreview ? (
+                    <div></div>
+                  ) : (
+                    <div {...getAiRootProps()} className="cursor-pointer hover:bg-gray-50 transition">
+                      <input {...getAiInputProps()} />
+                      <div className="flex flex-col items-center justify-center">
+                        <Camera className="h-12 w-12 text-gray-400 mb-2" />
+                        <p className="text-gray-600 text-sm">
+                          Drag & drop a car image here or click to select
+                        </p>
+                        <p className="text-gray-500 text-xs m-1">
+                          Supports: JPG, PNG, WebP (Max 5MB)
+                        </p>
+                      </div>
+                    </div>
+                  )}
+                </div>
+              </div>
+            </CardContent>
+          </Card>
+        </TabsContent>
       </Tabs>
     </div>
   );
