@@ -569,9 +569,9 @@ const AddCarForm = () => {
             </CardHeader>
             <CardContent>
               <div className="space-y-6">
-                <div>
+                <div className="border-2 border-dashed rounded-lg p-6 text-center">
                   {imagePreview ? (
-                    <div></div>
+                    <div className="flex flex-col items-center"></div>
                   ) : (
                     <div {...getAiRootProps()} className="cursor-pointer hover:bg-gray-50 transition">
                       <input {...getAiInputProps()} />
