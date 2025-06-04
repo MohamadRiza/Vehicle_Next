@@ -1,9 +1,13 @@
+"use server";
+
 import { db } from "@/lib/prisma";
 import { createClient } from "@/lib/Supabase";
 import { auth } from "@clerk/nextjs/server";
 import { GoogleGenerativeAI } from "@google/generative-ai";
 import { revalidatePath } from "next/cache";
 import { cookies } from "next/headers";
+
+import {v4 as uuidv4} from "uuid";
 
 // function to convert file to base64
 async function fileToBase64(file) {
@@ -109,7 +113,7 @@ export async function processCarImageWithAI(file) {
   }
 }
 
-export async function addCar({ carData, images }) {
+export async function addCar({ carData, image }) {
   try {
     const { userId } = await auth();
     if (!userId) throw new Error("unauthorized");
@@ -128,11 +132,11 @@ export async function addCar({ carData, images }) {
 
     const imageUrls = [];
 
-    for (let i = 0; i < images.length; i++) {
-      const base64Data = images[i];
+    for (let i = 0; i < image.length; i++) {
+      const base64Data = image[i];
 
-      //skip if image data is not valid
-      if (!base64Data || !base64Data.starstWith("data.image/")) {
+      //skip if image data is not valid 
+      if (!base64Data || !base64Data.startsWith("data:image/")) {
         console.warn("Skipping invalid image data");
         continue;
       }

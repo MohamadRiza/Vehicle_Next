@@ -18,10 +18,10 @@ const CarCard = ({ car }) => {
   return (
     <Card className="overflow-hidden hower:shadow-lg transition group py-0">
       <div className="relative h-48">
-        {car.images && car.images.length > 0 ? (
+        {car.image && car.image.length > 0 ? (
           <div>
             <Image
-              src={car.images[0]}
+              src={car.image[0]}
               alt={`${car.make} ${car.model}`}
               fill
               className="object-cover group-hover:scale-105 transition duration-300"

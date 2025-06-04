@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -28,6 +28,8 @@ import { toast } from "sonner";
 import { Loader2, Upload, X } from "lucide-react";
 import Image from "next/image";
 import { Button } from "@/components/ui/button";
+import useFetch from "@/hooks/user-fetch";
+import { addCar } from "@/action/cars";
 
 const fuelType = ["petrol", "Diesel", "Electric", "Hybrid", "Pug-in Hybrid"];
 const transmission = ["Automatic", "Manual", "Semi-Automatic"];
@@ -98,11 +100,36 @@ const AddCarForm = () => {
     },
   });
 
+  const {
+    data: addCarResult,
+    loading: addCarLoading,
+    fn: addCarFn,
+  } = useFetch(addCar);
+
+  useEffect(()=>{
+    if(addCarResult?.success){
+      toast.success("Car Added Successfully");
+      router.push("/admin/cars");
+    }
+  },[addCarResult]);
+
   const onSubmit = async (data) => {
     if (uploadedImages.length === 0) {
       setImageError("At least one image is required");
       return;
     }
+
+    const carData = {
+      ...data,
+      year: parseInt(data.year),
+      price: parseFloat(data.price),
+      mileage: parseInt(data.mileage),
+      seats: data.seats ? parseInt(data.seats) : null,
+    }
+    await addCarFn({
+      carData,
+      image: uploadedImages,
+    })
   };
 
   const onMultiImageDrop = (acceptedFiles) => {
@@ -418,7 +445,7 @@ const AddCarForm = () => {
 
                 <div>
                   <Label
-                    htmlFor="images"
+                    htmlFor="image"
                     className={imageError ? "text-red-500" : ""}
                   >
                     Images{" "}
@@ -481,8 +508,12 @@ const AddCarForm = () => {
                   </div>
                 )}
 
-                <Button type="submit" className="w-full md:w-auto" disabled={true}>
-                  {true ? (
+                <Button
+                  type="submit"
+                  className="w-full md:w-auto"
+                  disabled={addCarLoading}
+                >
+                  {addCarLoading ? (
                     <>
                       <Loader2 className="mr-2 h-4 w-4 animate-spin" />
                       Adding Cars...
