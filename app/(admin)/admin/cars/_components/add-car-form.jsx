@@ -133,6 +133,8 @@ const AddCarForm = () => {
       multiple: false,
     });
 
+
+
   const {
     data: addCarResult,
     loading: addCarLoading,
@@ -622,6 +624,28 @@ const AddCarForm = () => {
                     </div>
                   )}
                 </div>
+
+                  <div className="bg-gray-50 p-4 rounded-md">
+                  <h3 className="font-medium mb-2">How it Works</h3>
+                  <ol className="space-y-2 text-sm text-gray-600 list-decimal pl-4">
+                  <li>Upload clear image of a car</li>
+                  <li>Click "Extract Details" to analyze with AI</li>
+                  <li>Reveiw the extracted information</li>
+                  <li>Fill any missing details manually</li>
+                  <li>Add then car to your inventory</li>
+                  </ol>
+                  </div>
+
+                  <div className="bg-amber-50 p-4 rounded-md">
+                    <h3 className="font-medium text-amber-800 mb-1">Tips for the best result</h3>
+                    <ul className="space-y-1 text-sm text-amber-700">
+                      <li>● Use clear, well-lit image</li>
+                      <li>● Try to capture the entire vehicle</li>
+                      <li>● for difficult models, use multiple views</li>
+                      <li>● Always verify AI-extracted information</li>
+                    </ul>
+                  </div>
+                
               </div>
             </CardContent>
           </Card>
