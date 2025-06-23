@@ -61,7 +61,7 @@ export async function processCarImageWithAI(file) {
         "description": "",
         "confidence": 0.0
     }
-
+    and give me price in USD without ($)symbol,
     for confidence, provide a value between 0 and 1 representing how confident you are in your ovarall identification. only respond with the JSON object, nothing else.
     `;
 

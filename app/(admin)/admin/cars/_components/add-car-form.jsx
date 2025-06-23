@@ -32,6 +32,7 @@ import { Button } from "@/components/ui/button";
 import useFetch from "@/hooks/user-fetch";
 import { addCar, processCarImageWithAI } from "@/action/cars";
 import { set } from "date-fns";
+import { useRouter } from "next/navigation";
 
 const fuelType = ["petrol", "Diesel", "Electric", "Hybrid", "Pug-in Hybrid"];
 const transmission = ["Automatic", "Manual", "Semi-Automatic"];
@@ -53,6 +54,7 @@ const AddCarForm = () => {
   const [imageError, setImageError] = useState("");
   const [imagePreview, setImagePreview] = useState(null);
   const [uploadAiImage, setUploadAiImage] = useState(null);
+  const router = useRouter();
 
   const carFormsSchema = z.object({
     make: z.string().min(1, "make is requeired"),
