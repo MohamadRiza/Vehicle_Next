@@ -18,6 +18,31 @@ async function fileToBase64(file) {
 
 export async function processCarImageWithAI(file) {
   try {
+    // ── Local AI Server Integration ───────────────────────────
+    if (process.env.USE_LOCAL_AI === "true") {
+      const formData = new FormData();
+      formData.append("file", file);
+
+      const res = await fetch("http://localhost:8000/predict", {
+        method: "POST",
+        body: formData,
+      });
+
+      if (!res.ok) {
+        throw new Error(`Local AI server returned status ${res.status}`);
+      }
+
+      const result = await res.json();
+      if (!result.success) {
+        throw new Error(result.error || "Local AI prediction failed");
+      }
+
+      return {
+        success: true,
+        data: result.data,
+      };
+    }
+
     //check the api key is available?
     if (!process.env.GEMINI_API_KEY) {
       throw new Error("GEMINI API key is not found...");
@@ -101,15 +126,15 @@ export async function processCarImageWithAI(file) {
         success: true,
         data: carDetails,
       };
-    } catch (error) {
-      console.error("failled to parse AI response: ", parseError);
+    } catch (parseError) {
+      console.error("failed to parse AI response: ", parseError);
       return {
         success: false,
-        error: "failled to parse AI response",
+        error: "failed to parse AI response",
       };
     }
   } catch (error) {
-    throw new Error("GEMINI API error" + error.message);
+    throw new Error("AI prediction error: " + error.message);
   }
 }
 
