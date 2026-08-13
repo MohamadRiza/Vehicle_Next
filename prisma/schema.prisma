@@ -216,5 +216,18 @@ model HomepageContent {
   updatedAt        DateTime @updatedAt
 }
 
+model Testimonial {
+  id          String   @id @default(uuid())
+  name        String
+  role        String?
+  avatar      String?
+  rating      Int      @default(5)
+  content     String
+  isFeatured  Boolean  @default(true)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+}
+
+
 
 
