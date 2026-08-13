@@ -27,6 +27,7 @@ model User {
   role          UserRole           @default(USER)
   savedCars     UserSavedCar[]
   testDriveCars TestDriveBooking[]
+  reviews       CarReview[]
 }
 
 enum UserRole {
@@ -52,6 +53,8 @@ model Car {
   image             String[] //array supabase storage URLs
   savedBy           UserSavedCar[]
   testDriveBookings TestDriveBooking[]
+  enquiries         ContactEnquiry[]
+  reviews           CarReview[]
   createdAt         DateTime           @default(now())
   updatedAt         DateTime           @updatedAt
 
@@ -148,3 +151,70 @@ enum BookingStatus {
   CANCELLED
   NO_SHOW
 }
+
+model ContactEnquiry {
+  id        String        @id @default(uuid())
+  name      String
+  email     String
+  phone     String?
+  subject   String?
+  message   String
+  status    EnquiryStatus @default(UNREAD)
+  carId     String?
+  car       Car?          @relation(fields: [carId], references: [id], onDelete: SetNull)
+  createdAt DateTime      @default(now())
+  updatedAt DateTime      @updatedAt
+
+  @@index([status])
+  @@index([createdAt])
+}
+
+enum EnquiryStatus {
+  UNREAD
+  READ
+  REPLIED
+  ARCHIVED
+}
+
+model CarReview {
+  id          String       @id @default(uuid())
+  carId       String?
+  car         Car?         @relation(fields: [carId], references: [id], onDelete: SetNull)
+  userId      String?
+  user        User?        @relation(fields: [userId], references: [id], onDelete: SetNull)
+  authorName  String
+  authorEmail String?
+  rating      Int          // 1 to 5
+  title       String?
+  comment     String
+  status      ReviewStatus @default(PENDING)
+  createdAt   DateTime     @default(now())
+  updatedAt   DateTime     @updatedAt
+
+  @@index([status])
+  @@index([carId])
+  @@index([userId])
+}
+
+enum ReviewStatus {
+  PENDING
+  APPROVED
+  REJECTED
+}
+
+model HomepageContent {
+  id               String   @id @default(uuid())
+  heroTitle        String   @default("Find your dream car with vehicle AI")
+  heroSubtitle     String   @default("Advanced AI Car Search and Test Drive from thousands of vehicles")
+  bannerImage      String?
+  promoHeading     String?  @default("Ready to find your dream car?")
+  promoSubtext     String?  @default("Join thousands of satisfied customers who found their perfect vehicle through our platform")
+  announcement     String?  @default("🔥 Special Offer: Free Home Delivery on All Verified Vehicles!")
+  isAnnounceActive Boolean  @default(true)
+  slides           Json?
+  createdAt        DateTime @default(now())
+  updatedAt        DateTime @updatedAt
+}
+
+
+

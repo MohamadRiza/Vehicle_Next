@@ -1,7 +1,7 @@
 "use client";
 
 import { cn } from "@/lib/utils";
-import { Calendar, Car, Cog, LayoutDashboard } from "lucide-react";
+import { BarChart3, Calendar, Car, Cog, Layout, LayoutDashboard, MessageSquare, Star, Users } from "lucide-react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import React from "react";
@@ -21,6 +21,31 @@ const routes = [
     label: "Test Drive",
     icon: Calendar,
     href: "/admin/test-drive",
+  },
+  {
+    label: "Customers",
+    icon: Users,
+    href: "/admin/customers",
+  },
+  {
+    label: "Enquiries",
+    icon: MessageSquare,
+    href: "/admin/enquiries",
+  },
+  {
+    label: "Reviews",
+    icon: Star,
+    href: "/admin/reviews",
+  },
+  {
+    label: "Reports",
+    icon: BarChart3,
+    href: "/admin/reports",
+  },
+  {
+    label: "Content",
+    icon: Layout,
+    href: "/admin/content",
   },
   {
     label: "Settings",

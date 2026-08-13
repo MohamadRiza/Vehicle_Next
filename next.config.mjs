@@ -8,9 +8,21 @@ const nextConfig = {
     remotePatterns: [
       {
         protocol: "https",
-        hostname: "https://rmikrositqccszckqyhg.supabase.co"
-      }
-    ]
+        hostname: "img.clerk.com",
+      },
+      {
+        protocol: "https",
+        hostname: "images.clerk.dev",
+      },
+      {
+        protocol: "https",
+        hostname: "*.supabase.co",
+      },
+      {
+        protocol: "https",
+        hostname: "images.unsplash.com",
+      },
+    ],
   },
 
   async headers() {
