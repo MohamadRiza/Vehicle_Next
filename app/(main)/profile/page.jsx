@@ -19,6 +19,8 @@ import Image from "next/image";
 import React from "react";
 import ProfileForm from "./_components/profile-form";
 
+export const dynamic = "force-dynamic";
+
 export const metadata = {
   title: "Personal Information | Vehiql AI",
   description: "Manage your contact details, mobile number, and residential address for showroom reservations.",

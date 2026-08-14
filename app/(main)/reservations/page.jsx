@@ -5,6 +5,8 @@ import { Calendar, Car, Lock } from "lucide-react";
 import React from "react";
 import ReservationsClient from "./_components/reservations-client";
 
+export const dynamic = "force-dynamic";
+
 export const metadata = {
   title: "My Reservations & Test Drives | Vehicle AI",
   description: "Track your booked vehicle test drives, scheduled appointments, and saved vehicles.",
