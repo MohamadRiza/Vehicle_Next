@@ -47,6 +47,89 @@ export async function getUserReservations() {
   }
 }
 
+export async function toggleSaveCar(carId) {
+  try {
+    const { userId: clerkId } = await auth();
+    if (!clerkId) {
+      return { success: false, error: "Please sign in to save vehicles to your favorites." };
+    }
+
+    const user = await CheckUser();
+    if (!user) {
+      return { success: false, error: "User profile not found." };
+    }
+
+    const existing = await db.userSavedCar.findFirst({
+      where: {
+        userId: user.id,
+        carId,
+      },
+    });
+
+    if (existing) {
+      await db.userSavedCar.delete({
+        where: { id: existing.id },
+      });
+
+      revalidatePath("/reservations");
+      revalidatePath("/cars");
+      revalidatePath("/");
+
+      return {
+        success: true,
+        saved: false,
+        message: "Vehicle removed from saved list.",
+      };
+    } else {
+      await db.userSavedCar.create({
+        data: {
+          userId: user.id,
+          carId,
+        },
+      });
+
+      revalidatePath("/reservations");
+      revalidatePath("/cars");
+      revalidatePath("/");
+
+      return {
+        success: true,
+        saved: true,
+        message: "Vehicle saved to your favorites!",
+      };
+    }
+  } catch (error) {
+    console.error("Error toggling saved car:", error);
+    return { success: false, error: error.message };
+  }
+}
+
+export async function getUserSavedCarIds() {
+  try {
+    const { userId: clerkId } = await auth();
+    if (!clerkId) return { success: true, savedCarIds: [] };
+
+    const user = await db.user.findUnique({
+      where: { clerkUserId: clerkId },
+    });
+
+    if (!user) return { success: true, savedCarIds: [] };
+
+    const saved = await db.userSavedCar.findMany({
+      where: { userId: user.id },
+      select: { carId: true },
+    });
+
+    return {
+      success: true,
+      savedCarIds: saved.map((s) => s.carId),
+    };
+  } catch (error) {
+    console.error("Error fetching user saved car IDs:", error);
+    return { success: false, savedCarIds: [] };
+  }
+}
+
 export async function cancelUserTestDrive(bookingId) {
   try {
     const { userId: clerkId } = await auth();
@@ -92,7 +175,6 @@ export async function removeSavedCar(savedCarId) {
     });
 
     revalidatePath("/reservations");
-    revalidatePath("/saved-cars");
 
     return { success: true };
   } catch (error) {

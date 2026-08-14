@@ -22,6 +22,10 @@ model User {
   name          String?
   imageUrl      String?
   phone         String?
+  country       String?
+  address       String?
+  city          String?
+  postalCode    String?
   createdAt     DateTime           @default(now())
   updatedAt     DateTime           @updatedAt
   role          UserRole           @default(USER)

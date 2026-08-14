@@ -1,8 +1,59 @@
 "use server";
 
+import { CheckUser } from "@/lib/CheckUser";
 import { db } from "@/lib/prisma";
 import { auth } from "@clerk/nextjs/server";
 import { revalidatePath } from "next/cache";
+
+export async function createPublicTestDriveBooking({ carId, bookingDate, startTime, notes, phone }) {
+  try {
+    const { userId: clerkId } = await auth();
+    if (!clerkId) {
+      return { success: false, error: "Please sign in to book a test drive." };
+    }
+
+    const user = await CheckUser();
+    if (!user) {
+      return { success: false, error: "User profile not found. Please log in again." };
+    }
+
+    if (!carId || !bookingDate || !startTime) {
+      return { success: false, error: "Car, date, and preferred time slot are required." };
+    }
+
+    // Update phone if provided
+    if (phone && phone.trim() !== "") {
+      await db.user.update({
+        where: { id: user.id },
+        data: { phone: phone.trim() },
+      });
+    }
+
+    const booking = await db.testDriveBooking.create({
+      data: {
+        userId: user.id,
+        carId,
+        bookingDate: new Date(bookingDate),
+        startTime,
+        endTime: startTime,
+        status: "PENDING",
+        notes: notes || "Public online booking request",
+      },
+    });
+
+    revalidatePath("/reservations");
+    revalidatePath("/admin/test-drive");
+    revalidatePath(`/cars/${carId}`);
+
+    return {
+      success: true,
+      booking: JSON.parse(JSON.stringify(booking)),
+    };
+  } catch (error) {
+    console.error("Error creating public test drive booking:", error);
+    return { success: false, error: error.message };
+  }
+}
 
 export async function getAdminTestDriveBookings(filters = {}) {
   try {

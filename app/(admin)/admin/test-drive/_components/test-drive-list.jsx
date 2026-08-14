@@ -48,11 +48,13 @@ import {
   CheckCircle2,
   Clock,
   Filter,
+  MessageSquare,
   MoreVertical,
   Phone,
   Plus,
   RefreshCw,
   Search,
+  StickyNote,
   User,
   UserCheck,
   X,
@@ -91,6 +93,10 @@ export default function TestDriveList() {
   // Filter states
   const [search, setSearch] = useState("");
   const [statusFilter, setStatusFilter] = useState("ALL");
+
+  // View Notes Modal state
+  const [notesModalOpen, setNotesModalOpen] = useState(false);
+  const [selectedBookingForNotes, setSelectedBookingForNotes] = useState(null);
 
   // Reschedule Modal state
   const [rescheduleModalOpen, setRescheduleModalOpen] = useState(false);
@@ -148,6 +154,11 @@ export default function TestDriveList() {
         toast.error(res.error || "Failed to update status");
       }
     });
+  };
+
+  const openNotesModal = (booking) => {
+    setSelectedBookingForNotes(booking);
+    setNotesModalOpen(true);
   };
 
   const openRescheduleModal = (booking) => {
@@ -365,6 +376,7 @@ export default function TestDriveList() {
                   <TableHead>Date</TableHead>
                   <TableHead>Time</TableHead>
                   <TableHead>Phone</TableHead>
+                  <TableHead>Special Notes</TableHead>
                   <TableHead>Status</TableHead>
                   <TableHead className="text-right">Actions</TableHead>
                 </TableRow>
@@ -437,6 +449,23 @@ export default function TestDriveList() {
                       {booking.user?.phone || booking.phone || "07XXXXXXXX"}
                     </TableCell>
 
+                    {/* SPECIAL NOTES COLUMN */}
+                    <TableCell className="max-w-[200px]">
+                      {booking.notes ? (
+                        <button
+                          type="button"
+                          onClick={() => openNotesModal(booking)}
+                          className="flex items-center gap-1.5 text-xs text-amber-900 bg-amber-50 border border-amber-200/80 p-1.5 px-2.5 rounded-xl hover:bg-amber-100 transition-colors w-full text-left group"
+                          title="Click to view full notes"
+                        >
+                          <MessageSquare className="w-3.5 h-3.5 text-amber-600 flex-shrink-0 group-hover:scale-110 transition-transform" />
+                          <span className="truncate font-medium">{booking.notes}</span>
+                        </button>
+                      ) : (
+                        <span className="text-[11px] text-slate-400 italic">No notes</span>
+                      )}
+                    </TableCell>
+
                     {/* STATUS */}
                     <TableCell>{getStatusBadge(booking.status)}</TableCell>
 
@@ -488,6 +517,15 @@ export default function TestDriveList() {
                             </Button>
                           </DropdownMenuTrigger>
                           <DropdownMenuContent align="end" className="w-40">
+                            {booking.notes && (
+                              <DropdownMenuItem
+                                onClick={() => openNotesModal(booking)}
+                                className="text-xs gap-2 text-amber-700"
+                              >
+                                <StickyNote className="w-3.5 h-3.5 text-amber-600" />
+                                View Special Notes
+                              </DropdownMenuItem>
+                            )}
                             <DropdownMenuItem
                               onClick={() => handleStatusUpdate(booking.id, "COMPLETED")}
                               className="text-xs gap-2"
@@ -513,6 +551,39 @@ export default function TestDriveList() {
           </div>
         )}
       </div>
+
+      {/* VIEW SPECIAL NOTES MODAL DIALOG */}
+      <Dialog open={notesModalOpen} onOpenChange={setNotesModalOpen}>
+        <DialogContent className="sm:max-w-md rounded-2xl">
+          <DialogHeader>
+            <DialogTitle className="flex items-center gap-2 text-lg text-amber-900">
+              <MessageSquare className="w-5 h-5 text-amber-600" /> Special Requests & Notes
+            </DialogTitle>
+            <DialogDescription className="text-xs text-slate-500">
+              Submitted by customer {selectedBookingForNotes?.user?.name || "Customer"} for test drive appointment.
+            </DialogDescription>
+          </DialogHeader>
+
+          <div className="py-3">
+            <div className="bg-amber-50/80 border border-amber-200 p-4 rounded-2xl space-y-2 text-xs text-slate-800">
+              <p className="font-semibold text-amber-900 text-xs">Customer Message / Instructions:</p>
+              <p className="whitespace-pre-line leading-relaxed text-slate-700 font-medium">
+                {selectedBookingForNotes?.notes || "No additional notes provided."}
+              </p>
+            </div>
+          </div>
+
+          <DialogFooter>
+            <Button
+              type="button"
+              onClick={() => setNotesModalOpen(false)}
+              className="text-xs rounded-xl bg-slate-900 hover:bg-slate-800 text-white w-full"
+            >
+              Close Notes
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
 
       {/* RESCHEDULE MODAL DIALOG */}
       <Dialog open={rescheduleModalOpen} onOpenChange={setRescheduleModalOpen}>

@@ -1,20 +1,34 @@
 "use client";
 
-import React, { useState } from "react";
-import { Card, CardContent } from "./ui/card";
-import Image from "next/image";
-import { CarIcon, Fuel, Gauge, Heart, Sparkles } from "lucide-react";
-import { Button } from "./ui/button";
+import { toggleSaveCar } from "@/action/reservations";
 import { Badge } from "./ui/badge";
+import { Button } from "./ui/button";
+import { Card, CardContent } from "./ui/card";
+import { CarIcon, Fuel, Gauge, Heart, Sparkles } from "lucide-react";
+import Image from "next/image";
 import { useRouter } from "next/navigation";
+import React, { useState, useTransition } from "react";
+import { toast } from "sonner";
 
 const CarCard = ({ car }) => {
   const [isSaved, setIsSaved] = useState(car.wishlisted || false);
+  const [isPending, startTransition] = useTransition();
   const router = useRouter();
 
   const handleToggleSave = async (e) => {
     e.stopPropagation();
-    setIsSaved(!isSaved);
+
+    startTransition(async () => {
+      const res = await toggleSaveCar(car.id);
+      if (res.success) {
+        setIsSaved(res.saved);
+        toast.success(res.message, {
+          description: res.saved ? "You can view all saved vehicles under My Reservations." : "",
+        });
+      } else {
+        toast.error(res.error || "Please sign in to save vehicles.");
+      }
+    });
   };
 
   const formattedPrice = typeof car.price === "number"
@@ -64,14 +78,16 @@ const CarCard = ({ car }) => {
         <Button
           variant="ghost"
           size="icon"
+          disabled={isPending}
           className={`absolute top-3 right-3 bg-white/80 backdrop-blur-md hover:bg-white rounded-full h-9 w-9 shadow-md transition-all z-10 ${
             isSaved
-              ? "text-rose-500 hover:text-rose-600"
+              ? "text-rose-500 hover:text-rose-600 bg-white"
               : "text-slate-600 hover:text-slate-900"
           }`}
           onClick={handleToggleSave}
+          title={isSaved ? "Remove from saved cars" : "Save car for future"}
         >
-          <Heart className={isSaved ? "fill-current w-4 h-4" : "w-4 h-4"} />
+          <Heart className={isSaved ? "fill-rose-500 text-rose-500 w-4 h-4" : "w-4 h-4"} />
         </Button>
 
         {/* GRADIENT OVERLAY */}

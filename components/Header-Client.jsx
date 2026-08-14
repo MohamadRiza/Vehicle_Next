@@ -21,6 +21,7 @@ import {
   Layout,
   Menu,
   Sparkles,
+  User,
 } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
@@ -82,9 +83,9 @@ export default function HeaderClient({ user, isAdminPage = false }) {
             </Link>
 
             <Link
-              href="/cars"
+              href="/blogs"
               className={`text-xs font-bold transition-all relative py-1 ${
-                pathname === "/blogs"
+                pathname.startsWith("/blogs")
                   ? "text-blue-600 after:absolute after:bottom-[-2px] after:left-0 after:right-0 after:h-[2.5px] after:bg-blue-600 after:rounded-full"
                   : "text-slate-600 hover:text-blue-600"
               }`}
@@ -118,12 +119,6 @@ export default function HeaderClient({ user, isAdminPage = false }) {
           ) : (
             <div className="hidden md:flex items-center gap-2">
               <SignedIn>
-                <Link href="/saved-cars">
-                  <Button variant="ghost" size="icon" className="rounded-full text-slate-700 hover:text-rose-600 hover:bg-rose-50 h-9 w-9" title="Saved Cars">
-                    <Heart className="w-4 h-4 text-rose-500 fill-rose-500/20" />
-                  </Button>
-                </Link>
-
                 {!isAdmin ? (
                   <Link href="/reservations">
                     <Button size="sm" className="bg-blue-600 hover:bg-blue-500 text-white rounded-full text-xs font-extrabold px-5 py-2 shadow-md shadow-blue-600/30 gap-1.5 flex items-center">
@@ -152,15 +147,35 @@ export default function HeaderClient({ user, isAdminPage = false }) {
             </div>
           )}
 
-          {/* CLERK USER BUTTON */}
+          {/* CLERK USER BUTTON WITH CUSTOM MENU ITEMS */}
           <SignedIn>
             <UserButton
               appearance={{
                 elements: {
-                  avatarBox: "h-9 w-9 border-2 border-blue-100 rounded-full shadow-xs hover:scale-105 transition-transform",
+                  avatarBox: "h-9 w-9 border-2 border-blue-100 rounded-full shadow-xs hover:scale-105 transition-transform cursor-pointer",
                 },
               }}
-            />
+            >
+              <UserButton.MenuItems>
+                <UserButton.Link
+                  label="Personal Information"
+                  href="/profile"
+                  labelIcon={<User className="w-4 h-4 text-blue-600" />}
+                />
+                <UserButton.Link
+                  label="My Reservations"
+                  href="/reservations"
+                  labelIcon={<Calendar className="w-4 h-4 text-indigo-600" />}
+                />
+                {isAdmin && (
+                  <UserButton.Link
+                    label="Admin Portal"
+                    href="/admin"
+                    labelIcon={<Layout className="w-4 h-4 text-amber-600" />}
+                  />
+                )}
+              </UserButton.MenuItems>
+            </UserButton>
           </SignedIn>
 
           {/* MOBILE HAMBURGER MENU SHEET */}
@@ -241,19 +256,19 @@ export default function HeaderClient({ user, isAdminPage = false }) {
 
                     <SignedIn>
                       <Link
-                        href="/saved-cars"
+                        href="/profile"
                         onClick={() => setOpen(false)}
                         className={`flex items-center justify-between p-3 rounded-2xl text-xs font-bold transition-all ${
-                          pathname === "/saved-cars"
+                          pathname === "/profile"
                             ? "bg-blue-50 text-blue-700 border border-blue-200/60"
                             : "text-slate-700 hover:bg-slate-50"
                         }`}
                       >
                         <div className="flex items-center gap-3">
-                          <div className="p-2 rounded-xl bg-rose-100/60 text-rose-600">
-                            <Heart className="w-4 h-4 fill-rose-600/30" />
+                          <div className="p-2 rounded-xl bg-blue-100/60 text-blue-600">
+                            <User className="w-4 h-4" />
                           </div>
-                          <span>Saved Cars</span>
+                          <span>Personal Info</span>
                         </div>
                         <ChevronRight className="w-4 h-4 text-slate-400" />
                       </Link>
@@ -302,8 +317,12 @@ export default function HeaderClient({ user, isAdminPage = false }) {
                 {/* MOBILE SHEET FOOTER */}
                 <div className="pt-4 border-t border-slate-100 space-y-3">
                   <SignedIn>
-                    <div className="flex items-center justify-between p-3 rounded-2xl bg-slate-50 border border-slate-200/80">
-                      <div className="flex items-center gap-2">
+                    <Link
+                      href="/profile"
+                      onClick={() => setOpen(false)}
+                      className="flex items-center justify-between p-3.5 rounded-2xl bg-slate-50 border border-slate-200/80 hover:bg-blue-50/60 hover:border-blue-200 transition-all group"
+                    >
+                      <div className="flex items-center gap-2.5">
                         <UserButton
                           appearance={{
                             elements: {
@@ -312,7 +331,9 @@ export default function HeaderClient({ user, isAdminPage = false }) {
                           }}
                         />
                         <div className="text-left">
-                          <p className="text-xs font-bold text-slate-900">{user?.name || "Account"}</p>
+                          <p className="text-xs font-bold text-slate-900 group-hover:text-blue-600 transition-colors flex items-center gap-1">
+                            {user?.name || "Account"} <ChevronRight className="w-3.5 h-3.5 text-slate-400 group-hover:translate-x-0.5 transition-transform" />
+                          </p>
                           <p className="text-[10px] text-slate-500 truncate max-w-[130px]">{user?.email}</p>
                         </div>
                       </div>
@@ -321,7 +342,7 @@ export default function HeaderClient({ user, isAdminPage = false }) {
                           ADMIN
                         </span>
                       )}
-                    </div>
+                    </Link>
                   </SignedIn>
 
                   <SignedOut>
