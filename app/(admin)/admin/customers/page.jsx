@@ -4,6 +4,8 @@ import { Shield, UserCheck, Users } from "lucide-react";
 import React from "react";
 import CustomersList from "./_components/customers-list";
 
+export const dynamic = "force-dynamic";
+
 export const metadata = {
   title: "Customer Management | Vehicle Admin",
   description: "View registered customer accounts, manage permissions, edit contact numbers, or promote admins.",
