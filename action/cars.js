@@ -237,10 +237,20 @@ export async function addCar({ carData, image }) {
   }
 }
 
-
 export async function getCars(filters = {}) {
   try {
-    const { search, make, bodyType, fuelType, transmission, status, sortBy } = filters;
+    const {
+      search,
+      make,
+      bodyType,
+      fuelType,
+      transmission,
+      priceRange,
+      status,
+      sortBy = "newest",
+      page = 1,
+      limit = 9,
+    } = filters;
 
     const where = {};
 
@@ -264,6 +274,13 @@ export async function getCars(filters = {}) {
       where.transmission = { equals: transmission, mode: "insensitive" };
     }
 
+    if (priceRange && priceRange !== "ALL") {
+      if (priceRange === "under_20k") where.price = { lte: 20000 };
+      else if (priceRange === "20k_50k") where.price = { gte: 20000, lte: 50000 };
+      else if (priceRange === "50k_100k") where.price = { gte: 50000, lte: 100000 };
+      else if (priceRange === "above_100k") where.price = { gte: 100000 };
+    }
+
     if (search && search.trim() !== "") {
       where.OR = [
         { make: { contains: search, mode: "insensitive" } },
@@ -275,21 +292,36 @@ export async function getCars(filters = {}) {
 
     let orderBy = { createdAt: "desc" };
     if (sortBy === "price_asc") orderBy = { price: "asc" };
-    if (sortBy === "price_desc") orderBy = { price: "desc" };
-    if (sortBy === "year_desc") orderBy = { year: "desc" };
+    else if (sortBy === "price_desc") orderBy = { price: "desc" };
+    else if (sortBy === "year_desc") orderBy = { year: "desc" };
+    else if (sortBy === "mileage_asc") orderBy = { mileage: "asc" };
 
-    const cars = await db.car.findMany({
-      where,
-      orderBy,
-    });
+    const pageNum = parseInt(page || 1, 10);
+    const limitNum = parseInt(limit || 9, 10);
+    const skip = (pageNum - 1) * limitNum;
+
+    const [total, cars] = await Promise.all([
+      db.car.count({ where }),
+      db.car.findMany({
+        where,
+        orderBy,
+        skip,
+        take: limitNum,
+      }),
+    ]);
+
+    const totalPages = Math.ceil(total / limitNum) || 1;
 
     return {
       success: true,
       cars: JSON.parse(JSON.stringify(cars)),
+      total,
+      totalPages,
+      currentPage: pageNum,
     };
   } catch (error) {
     console.error("Error fetching cars:", error);
-    return { success: false, error: error.message, cars: [] };
+    return { success: false, error: error.message, cars: [], total: 0, totalPages: 1, currentPage: 1 };
   }
 }
 
@@ -399,6 +431,3 @@ export async function getFeaturedCars() {
     return { success: false, cars: [] };
   }
 }
-
-
-

@@ -54,7 +54,7 @@ export default function HomeHeroCarousel({ slides = [], defaultTitle, defaultSub
       <div className="absolute inset-0 bg-gradient-to-t from-slate-950 via-slate-950/60 to-slate-950/30 z-10" />
 
       {/* HERO SLIDE CONTENT */}
-      <div className="relative z-20 container mx-auto px-4 pt-16 md:pt-24 pb-6 flex-1 flex flex-col justify-center max-w-5xl">
+      <div className="relative z-20 container mx-auto px-4 pt-24 md:pt-32 pb-8 flex-1 flex flex-col justify-center max-w-5xl">
         <div className="flex flex-col md:flex-row items-start md:items-center justify-between gap-6 mb-8">
           <div className="space-y-4 max-w-2xl text-left">
             <Badge className="bg-blue-600/90 text-white border-blue-400/40 text-xs px-3.5 py-1 font-bold shadow-lg inline-flex items-center gap-1.5 uppercase tracking-wider">

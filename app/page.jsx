@@ -61,10 +61,10 @@ export default async function Home() {
   ];
 
   return (
-    <div className="pt-20 flex flex-col min-h-screen bg-slate-50/50">
+    <div className="pt-0 flex flex-col min-h-screen bg-slate-50/50">
       {/* SITE-WIDE ANNOUNCEMENT NOTIFICATION BAR */}
       {content?.isAnnounceActive && content?.announcement && (
-        <div className="bg-gradient-to-r from-blue-700 via-indigo-700 to-blue-800 text-white text-xs md:text-sm font-extrabold py-2.5 px-4 text-center shadow-md flex items-center justify-center gap-2">
+        <div className="pt-20 bg-gradient-to-r from-blue-700 via-indigo-700 to-blue-800 text-white text-xs md:text-sm font-extrabold py-2.5 px-4 text-center shadow-md flex items-center justify-center gap-2 relative z-30">
           <Megaphone className="w-4 h-4 text-blue-200 flex-shrink-0 animate-pulse" />
           <span>{content.announcement}</span>
         </div>
