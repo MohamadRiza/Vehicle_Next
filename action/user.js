@@ -25,11 +25,15 @@ export async function getUserProfile() {
     const email = user?.email || clerkUser?.emailAddresses?.[0]?.emailAddress || "";
     const name = user?.name || `${clerkUser?.firstName || ""} ${clerkUser?.lastName || ""}`.trim();
 
+    if (!user && !clerkUser) {
+      return { success: false, error: "User not found" };
+    }
+
     return {
       success: true,
       user: {
-        id: user.id,
-        name: name,
+        id: user?.id || clerkId,
+        name: name || "Customer",
         email: email,
         phone: user?.phone || "",
         country: user?.country || "Sri Lanka",

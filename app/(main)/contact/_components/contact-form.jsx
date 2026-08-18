@@ -60,28 +60,28 @@ export default function ContactForm() {
   };
 
   return (
-    <form onSubmit={handleSubmit} className="space-y-5 text-xs">
+    <form onSubmit={handleSubmit} className="space-y-4 pt-1">
       {/* NAME & EMAIL ROW */}
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
         <div className="space-y-1.5">
-          <Label className="font-bold text-slate-700">Full Name *</Label>
+          <Label className="font-bold text-slate-800 text-xs">Full Name *</Label>
           <Input
             value={formData.name}
             onChange={(e) => handleChange("name", e.target.value)}
             placeholder="John Doe"
-            className="text-xs rounded-xl bg-slate-50/50"
+            className="text-xs rounded-xl bg-slate-50/70 border-slate-200 h-11 focus-visible:ring-blue-500"
             required
           />
         </div>
 
         <div className="space-y-1.5">
-          <Label className="font-bold text-slate-700">Email Address *</Label>
+          <Label className="font-bold text-slate-800 text-xs">Email Address *</Label>
           <Input
             type="email"
             value={formData.email}
             onChange={(e) => handleChange("email", e.target.value)}
             placeholder="john@example.com"
-            className="text-xs rounded-xl bg-slate-50/50"
+            className="text-xs rounded-xl bg-slate-50/70 border-slate-200 h-11 focus-visible:ring-blue-500"
             required
           />
         </div>
@@ -90,23 +90,23 @@ export default function ContactForm() {
       {/* PHONE & SUBJECT ROW */}
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
         <div className="space-y-1.5">
-          <Label className="font-bold text-slate-700">Phone Number (Optional)</Label>
+          <Label className="font-bold text-slate-800 text-xs">Phone Number (Optional)</Label>
           <Input
             type="tel"
             value={formData.phone}
             onChange={(e) => handleChange("phone", e.target.value)}
             placeholder="+94 77 123 4567"
-            className="text-xs rounded-xl bg-slate-50/50"
+            className="text-xs rounded-xl bg-slate-50/70 border-slate-200 h-11 focus-visible:ring-blue-500"
           />
         </div>
 
         <div className="space-y-1.5">
-          <Label className="font-bold text-slate-700">Topic / Subject</Label>
+          <Label className="font-bold text-slate-800 text-xs">Topic / Subject</Label>
           <Select
             value={formData.subject}
             onValueChange={(val) => handleChange("subject", val)}
           >
-            <SelectTrigger className="text-xs rounded-xl bg-slate-50/50">
+            <SelectTrigger className="text-xs rounded-xl bg-slate-50/70 border-slate-200 h-11">
               <SelectValue placeholder="Select Subject" />
             </SelectTrigger>
             <SelectContent>
@@ -114,6 +114,7 @@ export default function ContactForm() {
               <SelectItem value="Test Drive Booking Question">Test Drive Booking Question</SelectItem>
               <SelectItem value="Car Buying & Pricing">Car Buying & Pricing</SelectItem>
               <SelectItem value="Vehicle Trade-In">Vehicle Trade-In</SelectItem>
+              <SelectItem value="Financing & Loans">Financing & Loans</SelectItem>
               <SelectItem value="Other Query">Other Query</SelectItem>
             </SelectContent>
           </Select>
@@ -122,32 +123,34 @@ export default function ContactForm() {
 
       {/* MESSAGE TEXTAREA */}
       <div className="space-y-1.5">
-        <Label className="font-bold text-slate-700">Your Message *</Label>
+        <Label className="font-bold text-slate-800 text-xs">Your Message *</Label>
         <Textarea
           value={formData.message}
           onChange={(e) => handleChange("message", e.target.value)}
           placeholder="Write your message or question here..."
-          className="text-xs rounded-xl bg-slate-50/50 min-h-[120px]"
+          className="text-xs rounded-xl bg-slate-50/70 border-slate-200 min-h-[140px] focus-visible:ring-blue-500"
           required
         />
       </div>
 
       {/* SUBMIT BUTTON */}
-      <Button
-        type="submit"
-        disabled={isPending}
-        className="w-full bg-blue-600 hover:bg-blue-500 text-white rounded-xl text-xs font-bold py-3 shadow-lg shadow-blue-600/20 gap-2"
-      >
-        {isPending ? (
-          <>
-            <RefreshCw className="w-4 h-4 animate-spin" /> Sending Message...
-          </>
-        ) : (
-          <>
-            <Send className="w-4 h-4" /> Send Message
-          </>
-        )}
-      </Button>
+      <div className="pt-2">
+        <Button
+          type="submit"
+          disabled={isPending}
+          className="w-full bg-blue-600 hover:bg-blue-500 text-white rounded-xl text-xs sm:text-sm font-extrabold h-12 shadow-lg shadow-blue-600/25 gap-2 transition-all hover:scale-[1.01]"
+        >
+          {isPending ? (
+            <>
+              <RefreshCw className="w-4 h-4 animate-spin" /> Sending Message...
+            </>
+          ) : (
+            <>
+              <Send className="w-4 h-4" /> Send Message
+            </>
+          )}
+        </Button>
+      </div>
     </form>
   );
 }

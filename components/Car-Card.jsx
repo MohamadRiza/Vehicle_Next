@@ -4,7 +4,7 @@ import { toggleSaveCar } from "@/action/reservations";
 import { Badge } from "./ui/badge";
 import { Button } from "./ui/button";
 import { Card, CardContent } from "./ui/card";
-import { CarIcon, Fuel, Gauge, Heart, Sparkles } from "lucide-react";
+import { CarIcon, Fuel, Gauge, Heart, Settings, Sparkles } from "lucide-react";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
 import React, { useState, useTransition } from "react";
@@ -45,7 +45,7 @@ const CarCard = ({ car }) => {
       className="overflow-hidden hover:shadow-xl transition-all duration-300 group cursor-pointer border border-slate-200/80 rounded-2xl bg-white flex flex-col py-0"
     >
       {/* VEHICLE IMAGE CONTAINER */}
-      <div className="relative h-52 w-full bg-slate-100 overflow-hidden">
+      <div className="relative h-48 w-full bg-slate-100 overflow-hidden">
         {car.image && car.image.length > 0 ? (
           <Image
             src={car.image[0]}
@@ -62,14 +62,12 @@ const CarCard = ({ car }) => {
 
         {/* STATUS / FEATURED BADGES */}
         <div className="absolute top-3 left-3 flex flex-col gap-1 z-10">
+          <Badge className="bg-blue-600 text-white font-extrabold text-[10px] px-2.5 py-0.5 rounded-md shadow">
+            Featured
+          </Badge>
           {car.status === "SOLD" && (
             <Badge className="bg-slate-900/90 text-white font-semibold text-[10px] px-2.5 py-0.5 rounded-md shadow">
               SOLD
-            </Badge>
-          )}
-          {car.feautured && (
-            <Badge className="bg-amber-500 text-white font-semibold text-[10px] px-2 py-0.5 rounded-md shadow flex items-center gap-1">
-              <Sparkles className="w-3 h-3" /> Featured
             </Badge>
           )}
         </div>
@@ -79,60 +77,51 @@ const CarCard = ({ car }) => {
           variant="ghost"
           size="icon"
           disabled={isPending}
-          className={`absolute top-3 right-3 bg-white/80 backdrop-blur-md hover:bg-white rounded-full h-9 w-9 shadow-md transition-all z-10 ${
+          className={`absolute top-3 right-3 bg-white/90 backdrop-blur-md hover:bg-white rounded-full h-8 w-8 shadow-sm transition-all z-10 ${
             isSaved
               ? "text-rose-500 hover:text-rose-600 bg-white"
-              : "text-slate-600 hover:text-slate-900"
+              : "text-slate-500 hover:text-slate-900"
           }`}
           onClick={handleToggleSave}
           title={isSaved ? "Remove from saved cars" : "Save car for future"}
         >
-          <Heart className={isSaved ? "fill-rose-500 text-rose-500 w-4 h-4" : "w-4 h-4"} />
+          <Heart className={isSaved ? "fill-rose-500 text-rose-500 w-3.5 h-3.5" : "w-3.5 h-3.5"} />
         </Button>
-
-        {/* GRADIENT OVERLAY */}
-        <div className="absolute inset-x-0 bottom-0 h-12 bg-gradient-to-t from-black/50 to-transparent pointer-events-none" />
-        <div className="absolute bottom-2 left-3 text-white text-xs font-medium drop-shadow z-10">
-          {car.year} • {car.bodyType}
-        </div>
       </div>
 
       {/* CARD CONTENT */}
-      <CardContent className="p-5 flex-1 flex flex-col justify-between space-y-4">
+      <CardContent className="p-4 flex-1 flex flex-col justify-between space-y-3">
         <div>
-          <div className="flex items-start justify-between gap-2 mb-1">
-            <h3 className="text-lg font-bold text-slate-900 group-hover:text-blue-600 transition-colors line-clamp-1">
-              {car.make} {car.model}
-            </h3>
-          </div>
+          <h3 className="text-base font-extrabold text-slate-900 group-hover:text-blue-600 transition-colors line-clamp-1">
+            {car.make} {car.model}
+          </h3>
 
-          <div className="text-2xl font-extrabold text-blue-600 tracking-tight">
+          <p className="text-[11px] text-slate-400 font-medium mt-0.5">
+            {car.year || 2023} • {formattedMileage} km • {car.fuelType || "Petrol"}
+          </p>
+
+          <div className="text-xl font-black text-blue-600 tracking-tight mt-2">
             ${formattedPrice}
           </div>
         </div>
 
         {/* SPECS BADGES */}
-        <div className="grid grid-cols-2 gap-2 text-xs text-slate-600 pt-2 border-t border-slate-100">
-          <div className="flex items-center gap-1.5 bg-slate-50 p-2 rounded-lg">
-            <Gauge className="w-3.5 h-3.5 text-blue-500 flex-shrink-0" />
-            <span className="font-medium truncate">{formattedMileage} mi</span>
-          </div>
-          <div className="flex items-center gap-1.5 bg-slate-50 p-2 rounded-lg">
-            <Fuel className="w-3.5 h-3.5 text-indigo-500 flex-shrink-0" />
-            <span className="font-medium truncate">{car.fuelType}</span>
-          </div>
+        <div className="flex items-center gap-2 text-[11px] text-slate-600 pt-1">
+          <span className="flex items-center gap-1.5 bg-slate-100/80 px-2.5 py-1 rounded-md font-semibold text-slate-700">
+            <Settings className="w-3 h-3 text-blue-600 flex-shrink-0" />
+            <span>{car.transmission || "Automatic"}</span>
+          </span>
+          <span className="flex items-center gap-1.5 bg-slate-100/80 px-2.5 py-1 rounded-md font-semibold text-slate-700">
+            <Gauge className="w-3 h-3 text-indigo-600 flex-shrink-0" />
+            <span>{formattedMileage} mi</span>
+          </span>
         </div>
 
-        {/* ACTION BUTTON */}
-        <Button
-          className="w-full bg-slate-900 hover:bg-blue-600 text-white font-semibold rounded-xl shadow-sm transition-all duration-200"
-          onClick={(e) => {
-            e.stopPropagation();
-            router.push(`/cars/${car.id}`);
-          }}
-        >
-          View Car Details
-        </Button>
+        {/* VIEW DETAILS LINK */}
+        <div className="pt-2 border-t border-slate-100 flex items-center justify-between text-xs font-bold text-slate-700 group-hover:text-blue-600 transition-colors">
+          <span>View Details</span>
+          <span>→</span>
+        </div>
       </CardContent>
     </Card>
   );
