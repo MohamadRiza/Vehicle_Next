@@ -188,7 +188,19 @@ export default async function Footer() {
 
         {/* BOTTOM COPYRIGHT ROW */}
         <div className="pt-8 flex flex-col sm:flex-row items-center justify-between gap-4 text-[11px] text-slate-400">
-          <p>© {new Date().getFullYear()} {dealership.name || "Vehiql AI"}. All rights reserved.</p>
+          <div className="flex flex-wrap items-center justify-center sm:justify-start gap-1.5 text-center sm:text-left">
+            <span>© {new Date().getFullYear()} {dealership.name || "Vehiql AI"}. All rights reserved.</span>
+            <span className="text-slate-600">•</span>
+            <a
+              href="https://nexasoft.site"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="text-slate-300 hover:text-blue-400 font-semibold transition-colors hover:underline"
+            >
+              Developed with precision by Nexasoft
+            </a>
+          </div>
+
           <div className="flex items-center gap-6">
             <Link href="/contact" className="hover:text-slate-300 transition-colors">
               Privacy Policy

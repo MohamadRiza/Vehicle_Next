@@ -122,7 +122,7 @@ export default function HeaderClient({ user, isAdminPage = false }) {
         )}
 
         {/* RIGHT: DESKTOP & MOBILE ACTIONS */}
-        <div className="flex items-center gap-2 md:gap-3">
+        <div className="flex items-center gap-2 md:gap-2.5">
           {/* DESKTOP ACTION BUTTONS */}
           {isAdminPage ? (
             <Link href="/" className="hidden md:block">
@@ -134,16 +134,33 @@ export default function HeaderClient({ user, isAdminPage = false }) {
           ) : (
             <div className="hidden md:flex items-center gap-2">
               <SignedIn>
+                {/* MY PROFILE DESKTOP QUICK LINK */}
+                <Link href="/profile">
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    className={`rounded-full text-xs font-bold px-3.5 py-2 border-slate-200 hover:bg-slate-50 gap-1.5 flex items-center transition-all ${
+                      pathname === "/profile"
+                        ? "bg-blue-50 text-blue-700 border-blue-200 shadow-xs"
+                        : "text-slate-700 hover:text-blue-600"
+                    }`}
+                  >
+                    <User className="w-3.5 h-3.5 text-blue-600" />
+                    <span>My Profile</span>
+                  </Button>
+                </Link>
+
+                {/* MY RESERVATIONS OR ADMIN BUTTON */}
                 {!isAdmin ? (
                   <Link href="/reservations">
-                    <Button size="sm" className="bg-blue-600 hover:bg-blue-500 text-white rounded-full text-xs font-extrabold px-5 py-2 shadow-md shadow-blue-600/30 gap-1.5 flex items-center">
+                    <Button size="sm" className="bg-blue-600 hover:bg-blue-500 text-white rounded-full text-xs font-extrabold px-4.5 py-2 shadow-md shadow-blue-600/30 gap-1.5 flex items-center cursor-pointer">
                       <span>My Reservations</span>
                       <ArrowRight className="w-3.5 h-3.5" />
                     </Button>
                   </Link>
                 ) : (
                   <Link href="/admin">
-                    <Button size="sm" className="bg-slate-900 hover:bg-slate-800 text-white rounded-full text-xs font-extrabold px-5 py-2 shadow-md gap-1.5 flex items-center">
+                    <Button size="sm" className="bg-slate-900 hover:bg-slate-800 text-white rounded-full text-xs font-extrabold px-4.5 py-2 shadow-md gap-1.5 flex items-center cursor-pointer">
                       <Layout className="w-3.5 h-3.5" />
                       <span>Admin Portal</span>
                     </Button>
@@ -153,7 +170,7 @@ export default function HeaderClient({ user, isAdminPage = false }) {
 
               <SignedOut>
                 <SignInButton mode="modal">
-                  <Button size="sm" className="bg-blue-600 hover:bg-blue-500 text-white rounded-full text-xs font-extrabold px-5 py-2 shadow-md shadow-blue-600/30 gap-1.5 flex items-center">
+                  <Button size="sm" className="bg-blue-600 hover:bg-blue-500 text-white rounded-full text-xs font-extrabold px-5 py-2 shadow-md shadow-blue-600/30 gap-1.5 flex items-center cursor-pointer">
                     <span>Sign In</span>
                     <ArrowRight className="w-3.5 h-3.5" />
                   </Button>
@@ -162,7 +179,7 @@ export default function HeaderClient({ user, isAdminPage = false }) {
             </div>
           )}
 
-          {/* CLERK USER BUTTON */}
+          {/* CLERK USER BUTTON WITH CUSTOM DROPDOWN ITEMS */}
           <SignedIn>
             <div className="flex items-center">
               <UserButton
@@ -171,7 +188,32 @@ export default function HeaderClient({ user, isAdminPage = false }) {
                     avatarBox: "w-8 h-8 rounded-full border border-slate-200 shadow-sm",
                   },
                 }}
-              />
+              >
+                <UserButton.MenuItems>
+                  <UserButton.Link
+                    label="My Profile"
+                    labelIcon={<User className="w-4 h-4" />}
+                    href="/profile"
+                  />
+                  <UserButton.Link
+                    label="My Reservations"
+                    labelIcon={<Calendar className="w-4 h-4" />}
+                    href="/reservations"
+                  />
+                  <UserButton.Link
+                    label="Saved Cars"
+                    labelIcon={<Heart className="w-4 h-4" />}
+                    href="/reservations?tab=saved-cars"
+                  />
+                  {isAdmin && (
+                    <UserButton.Link
+                      label="Admin Portal"
+                      labelIcon={<Layout className="w-4 h-4" />}
+                      href="/admin"
+                    />
+                  )}
+                </UserButton.MenuItems>
+              </UserButton>
             </div>
           </SignedIn>
 
