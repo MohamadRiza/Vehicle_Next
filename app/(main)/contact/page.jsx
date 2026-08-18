@@ -1,8 +1,9 @@
-import { getAdminSettings } from "@/action/settings";
+import { getPublicDealershipInfo } from "@/action/settings";
 import { Badge } from "@/components/ui/badge";
 import {
   Building2,
   Clock,
+  ExternalLink,
   Mail,
   MapPin,
   MessageSquare,
@@ -22,13 +23,12 @@ export const metadata = {
 };
 
 export default async function ContactPage() {
-  const settingsRes = await getAdminSettings();
-  const dealership = settingsRes.dealership || {
-    name: "vehicle motors",
-    address: "69 Car Street, Available, SL, 60100",
-    phone: "+94 078 797 9131",
-    email: "rawufdeenriza@gmail.com",
-  };
+  const dealership = await getPublicDealershipInfo();
+
+  // Find today's day of week
+  const days = ["SUNDAY", "MONDAY", "TUESDAY", "WEDNESDAY", "THURSDAY", "FRIDAY", "SATURDAY"];
+  const currentDay = days[new Date().getDay()];
+  const todaySchedule = dealership.workingHours?.find((w) => w.dayOfWeek === currentDay);
 
   return (
     <div className="min-h-screen bg-slate-50/60">
@@ -94,15 +94,26 @@ export default async function ContactPage() {
               {/* 4 INFO ITEM CARDS */}
               <div className="space-y-3.5 pt-2">
                 {/* 1. LOCATION */}
-                <div className="flex items-center gap-4 p-4 rounded-2xl bg-slate-50/80 border border-slate-200/70 hover:border-blue-300 transition-colors">
-                  <div className="w-10 h-10 rounded-xl bg-blue-100 text-blue-600 flex items-center justify-center flex-shrink-0">
+                <div className="flex items-start gap-4 p-4 rounded-2xl bg-slate-50/80 border border-slate-200/70 hover:border-blue-300 transition-colors">
+                  <div className="w-10 h-10 rounded-xl bg-blue-100 text-blue-600 flex items-center justify-center flex-shrink-0 mt-0.5">
                     <MapPin className="w-5 h-5" />
                   </div>
-                  <div>
+                  <div className="space-y-1">
                     <h4 className="font-extrabold text-slate-900 text-xs">Physical Location</h4>
-                    <p className="text-slate-600 text-[11px] mt-0.5 leading-relaxed font-medium">
+                    <p className="text-slate-600 text-[11px] leading-relaxed font-medium">
                       {dealership.address}
                     </p>
+                    {dealership.mapUrl && (
+                      <a
+                        href={dealership.mapUrl}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="inline-flex items-center gap-1 text-[11px] font-bold text-blue-600 hover:text-blue-700 hover:underline pt-0.5"
+                      >
+                        <span>Open in Google Maps</span>
+                        <ExternalLink className="w-3 h-3" />
+                      </a>
+                    )}
                   </div>
                 </div>
 
@@ -113,9 +124,12 @@ export default async function ContactPage() {
                   </div>
                   <div>
                     <h4 className="font-extrabold text-slate-900 text-xs">Direct Support Hotline</h4>
-                    <p className="text-slate-600 text-[11px] mt-0.5 font-medium">
+                    <a
+                      href={`tel:${dealership.phone}`}
+                      className="text-slate-700 hover:text-purple-600 text-[11px] mt-0.5 font-bold transition-colors block"
+                    >
                       {dealership.phone}
-                    </p>
+                    </a>
                   </div>
                 </div>
 
@@ -126,23 +140,47 @@ export default async function ContactPage() {
                   </div>
                   <div>
                     <h4 className="font-extrabold text-slate-900 text-xs">Official Email Inbox</h4>
-                    <p className="text-slate-600 text-[11px] mt-0.5 font-medium break-all">
+                    <a
+                      href={`mailto:${dealership.email}`}
+                      className="text-slate-700 hover:text-emerald-600 text-[11px] mt-0.5 font-bold break-all transition-colors block"
+                    >
                       {dealership.email}
-                    </p>
+                    </a>
                   </div>
                 </div>
 
-                {/* 4. HOURS */}
-                <div className="flex items-center gap-4 p-4 rounded-2xl bg-slate-50/80 border border-slate-200/70 hover:border-amber-300 transition-colors">
-                  <div className="w-10 h-10 rounded-xl bg-amber-100 text-amber-600 flex items-center justify-center flex-shrink-0">
-                    <Clock className="w-5 h-5" />
+                {/* 4. DYNAMIC SHOWROOM SCHEDULE */}
+                <div className="p-4 rounded-2xl bg-slate-50/80 border border-slate-200/70 hover:border-amber-300 transition-colors space-y-2.5">
+                  <div className="flex items-center justify-between">
+                    <div className="flex items-center gap-2.5">
+                      <div className="w-8 h-8 rounded-xl bg-amber-100 text-amber-600 flex items-center justify-center flex-shrink-0">
+                        <Clock className="w-4 h-4" />
+                      </div>
+                      <h4 className="font-extrabold text-slate-900 text-xs">Showroom Schedule</h4>
+                    </div>
+
+                    {todaySchedule?.isOpen ? (
+                      <Badge className="bg-emerald-500 text-white font-bold text-[10px] px-2 py-0.5">
+                        Open Today ({todaySchedule.openTime} - {todaySchedule.closeTime})
+                      </Badge>
+                    ) : (
+                      <Badge className="bg-slate-400 text-white font-bold text-[10px] px-2 py-0.5">
+                        Closed Today
+                      </Badge>
+                    )}
                   </div>
-                  <div>
-                    <h4 className="font-extrabold text-slate-900 text-xs">Showroom Hours</h4>
-                    <p className="text-slate-600 text-[11px] mt-0.5 font-medium">
-                      Monday – Saturday: 09:00 AM – 06:00 PM
-                    </p>
-                    <p className="text-slate-400 text-[10px] font-semibold">Sunday: Closed</p>
+
+                  <div className="grid grid-cols-2 gap-x-4 gap-y-1 text-[11px] pt-1 text-slate-600 border-t border-slate-200/60">
+                    {dealership.workingHours?.map((w) => (
+                      <div key={w.dayOfWeek} className="flex items-center justify-between py-0.5">
+                        <span className="capitalize font-semibold text-slate-700">
+                          {w.dayOfWeek.slice(0, 3).toLowerCase()}:
+                        </span>
+                        <span className="font-medium text-[10px]">
+                          {w.isOpen ? `${w.openTime} - ${w.closeTime}` : "Closed"}
+                        </span>
+                      </div>
+                    ))}
                   </div>
                 </div>
               </div>

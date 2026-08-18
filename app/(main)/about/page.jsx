@@ -1,3 +1,4 @@
+import { getPublicDealershipInfo } from "@/action/settings";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import {
@@ -6,6 +7,7 @@ import {
   Building,
   CheckCircle2,
   Cpu,
+  ExternalLink,
   Globe,
   HeartHandshake,
   Layers,
@@ -28,7 +30,8 @@ export const metadata = {
     "Learn more about Vehiql AI, our state-of-the-art vehicle diagnostic intelligence, and our mission to redefine luxury automotive retail.",
 };
 
-export default function AboutPage() {
+export default async function AboutPage() {
+  const dealership = await getPublicDealershipInfo();
   const stats = [
     { value: "10,000+", label: "Verified Vehicles", icon: Zap },
     { value: "150-Point", label: "AI Diagnostic Inspection", icon: ShieldCheck },
@@ -210,16 +213,28 @@ export default function AboutPage() {
                   <span className="text-[10px] font-black uppercase tracking-wider bg-blue-600 px-2.5 py-0.5 rounded-full">
                     Flagship Studio
                   </span>
-                  <h4 className="text-sm font-bold mt-1">69 Car Street Showroom Pavilion</h4>
+                  <h4 className="text-sm font-bold mt-1">{dealership.name || "Vehiql AI"} Pavilion</h4>
                 </div>
               </div>
 
               <div className="space-y-3 text-xs text-slate-600">
                 <div className="flex items-start gap-2.5">
-                  <MapPin className="w-4 h-4 text-blue-600 flex-shrink-0 mt-0.5" />
+                  <MapPin className="w-4 h-4 text-rose-500 flex-shrink-0 mt-0.5" />
                   <div>
                     <strong className="text-slate-900 block">Showroom Address:</strong>
-                    <span>69 Car Street, Available, SL, 60100</span>
+                    {dealership.mapUrl ? (
+                      <a
+                        href={dealership.mapUrl}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="text-blue-600 hover:underline inline-flex items-center gap-1 font-medium"
+                      >
+                        <span>{dealership.address}</span>
+                        <ExternalLink className="w-3 h-3" />
+                      </a>
+                    ) : (
+                      <span>{dealership.address}</span>
+                    )}
                   </div>
                 </div>
 
@@ -227,7 +242,9 @@ export default function AboutPage() {
                   <Phone className="w-4 h-4 text-emerald-600 flex-shrink-0 mt-0.5" />
                   <div>
                     <strong className="text-slate-900 block">Concierge Hotline:</strong>
-                    <span>+94 078 797 9131 / +1 (555) 123-4567</span>
+                    <a href={`tel:${dealership.phone}`} className="text-slate-700 hover:text-emerald-600 font-bold transition-colors">
+                      {dealership.phone}
+                    </a>
                   </div>
                 </div>
               </div>

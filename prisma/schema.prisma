@@ -83,6 +83,7 @@ model DealershipInfo {
   address      String         @default("69 Car Street, Available, SL, 60100")
   phone        String         @default("+94 078 797 9131")
   email        String         @default("rawufdeenriza@gmail.com")
+  mapUrl       String?        // Google Maps Location URL Link
   workingHours WorkingHours[]
   createdAt    DateTime       @default(now())
   updatedAt    DateTime       @updatedAt

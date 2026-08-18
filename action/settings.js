@@ -14,23 +14,94 @@ const defaultDays = [
   "SUNDAY",
 ];
 
+const dayOrder = {
+  MONDAY: 1,
+  TUESDAY: 2,
+  WEDNESDAY: 3,
+  THURSDAY: 4,
+  FRIDAY: 5,
+  SATURDAY: 6,
+  SUNDAY: 7,
+};
+
+/**
+ * PUBLIC: Fetch live dealership info, location link, and working schedule
+ */
+export async function getPublicDealershipInfo() {
+  try {
+    let dealership = await db.dealershipInfo.findFirst({
+      include: {
+        workingHours: true,
+      },
+    });
+
+    if (!dealership) {
+      return {
+        name: "Vehicle Motors",
+        address: "69 Car Street, Available, SL, 60100",
+        phone: "+94 078 797 9131",
+        email: "rawufdeenriza@gmail.com",
+        mapUrl: "https://maps.google.com/?q=69+Car+Street+Available+SL",
+        workingHours: defaultDays.map((day) => ({
+          dayOfWeek: day,
+          openTime: "09:00",
+          closeTime: "18:00",
+          isOpen: day !== "SUNDAY",
+        })),
+      };
+    }
+
+    // Sort working hours MONDAY -> SUNDAY
+    const sortedHours = (dealership.workingHours || []).sort(
+      (a, b) => (dayOrder[a.dayOfWeek] || 0) - (dayOrder[b.dayOfWeek] || 0)
+    );
+
+    return {
+      id: dealership.id,
+      name: dealership.name || "Vehicle Motors",
+      address: dealership.address || "69 Car Street, Available, SL, 60100",
+      phone: dealership.phone || "+94 078 797 9131",
+      email: dealership.email || "rawufdeenriza@gmail.com",
+      mapUrl: dealership.mapUrl || "https://maps.google.com/?q=69+Car+Street+Available+SL",
+      workingHours: JSON.parse(JSON.stringify(sortedHours)),
+    };
+  } catch (error) {
+    console.error("Error fetching public dealership info:", error);
+    return {
+      name: "Vehicle Motors",
+      address: "69 Car Street, Available, SL, 60100",
+      phone: "+94 078 797 9131",
+      email: "rawufdeenriza@gmail.com",
+      mapUrl: "https://maps.google.com/?q=69+Car+Street+Available+SL",
+      workingHours: defaultDays.map((day) => ({
+        dayOfWeek: day,
+        openTime: "09:00",
+        closeTime: "18:00",
+        isOpen: day !== "SUNDAY",
+      })),
+    };
+  }
+}
+
+/**
+ * ADMIN: Get dealership settings and working hours
+ */
 export async function getAdminSettings() {
   try {
     let dealership = await db.dealershipInfo.findFirst({
       include: {
-        workingHours: {
-          orderBy: { dayOfWeek: "asc" },
-        },
+        workingHours: true,
       },
     });
 
     if (!dealership) {
       dealership = await db.dealershipInfo.create({
         data: {
-          name: "vehicle motors",
+          name: "Vehicle Motors",
           address: "69 Car Street, Available, SL, 60100",
           phone: "+94 078 797 9131",
           email: "rawufdeenriza@gmail.com",
+          mapUrl: "https://maps.google.com/?q=69+Car+Street+Available+SL",
         },
         include: { workingHours: true },
       });
@@ -54,13 +125,17 @@ export async function getAdminSettings() {
 
         dealership = await db.dealershipInfo.findFirst({
           include: {
-            workingHours: {
-              orderBy: { dayOfWeek: "asc" },
-            },
+            workingHours: true,
           },
         });
       }
     }
+
+    const sortedHours = (dealership.workingHours || []).sort(
+      (a, b) => (dayOrder[a.dayOfWeek] || 0) - (dayOrder[b.dayOfWeek] || 0)
+    );
+
+    dealership.workingHours = sortedHours;
 
     return {
       success: true,
@@ -76,6 +151,9 @@ export async function getAdminSettings() {
   }
 }
 
+/**
+ * ADMIN: Update Dealership Contact Info & Map Location URL
+ */
 export async function updateDealershipSettings(data) {
   try {
     const { userId: clerkId } = await auth();
@@ -96,25 +174,30 @@ export async function updateDealershipSettings(data) {
       updated = await db.dealershipInfo.update({
         where: { id: existing.id },
         data: {
-          name: data.name,
-          address: data.address,
-          phone: data.phone,
-          email: data.email,
+          name: data.name?.trim() || "Vehicle Motors",
+          address: data.address?.trim() || "69 Car Street, Available, SL, 60100",
+          phone: data.phone?.trim() || "+94 078 797 9131",
+          email: data.email?.trim() || "rawufdeenriza@gmail.com",
+          mapUrl: data.mapUrl?.trim() || null,
         },
       });
     } else {
       updated = await db.dealershipInfo.create({
         data: {
-          name: data.name,
-          address: data.address,
-          phone: data.phone,
-          email: data.email,
+          name: data.name?.trim() || "Vehicle Motors",
+          address: data.address?.trim() || "69 Car Street, Available, SL, 60100",
+          phone: data.phone?.trim() || "+94 078 797 9131",
+          email: data.email?.trim() || "rawufdeenriza@gmail.com",
+          mapUrl: data.mapUrl?.trim() || null,
         },
       });
     }
 
     revalidatePath("/admin/settings");
     revalidatePath("/admin");
+    revalidatePath("/");
+    revalidatePath("/contact");
+    revalidatePath("/about");
 
     return {
       success: true,
@@ -126,6 +209,9 @@ export async function updateDealershipSettings(data) {
   }
 }
 
+/**
+ * ADMIN: Update Showroom Working Hours Schedule
+ */
 export async function updateWorkingHours(workingHoursArray) {
   try {
     const { userId: clerkId } = await auth();
@@ -167,6 +253,9 @@ export async function updateWorkingHours(workingHoursArray) {
 
     revalidatePath("/admin/settings");
     revalidatePath("/admin");
+    revalidatePath("/");
+    revalidatePath("/contact");
+    revalidatePath("/about");
 
     return { success: true };
   } catch (error) {
