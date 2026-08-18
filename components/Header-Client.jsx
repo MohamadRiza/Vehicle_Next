@@ -12,6 +12,8 @@ import { SignedIn, SignedOut, SignInButton, UserButton } from "@clerk/nextjs";
 import {
   ArrowLeft,
   ArrowRight,
+  BookOpen,
+  Briefcase,
   Calendar,
   CarFront,
   ChevronRight,
@@ -20,6 +22,7 @@ import {
   Home,
   Layout,
   Menu,
+  PhoneCall,
   Sparkles,
   User,
 } from "lucide-react";
@@ -91,6 +94,17 @@ export default function HeaderClient({ user, isAdminPage = false }) {
               }`}
             >
               Blogs
+            </Link>
+
+            <Link
+              href="/careers"
+              className={`text-xs font-bold transition-all relative py-1 ${
+                pathname.startsWith("/careers")
+                  ? "text-blue-600 after:absolute after:bottom-[-2px] after:left-0 after:right-0 after:h-[2.5px] after:bg-blue-600 after:rounded-full"
+                  : "text-slate-600 hover:text-blue-600"
+              }`}
+            >
+              Careers
             </Link>
 
             <Link
@@ -250,6 +264,60 @@ export default function HeaderClient({ user, isAdminPage = false }) {
                           <Compass className="w-4 h-4" />
                         </div>
                         <span>Explore Showroom Cars</span>
+                      </div>
+                      <ChevronRight className="w-4 h-4 text-slate-400" />
+                    </Link>
+
+                    <Link
+                      href="/blogs"
+                      onClick={() => setOpen(false)}
+                      className={`flex items-center justify-between p-3 rounded-2xl text-xs font-bold transition-all ${
+                        pathname.startsWith("/blogs")
+                          ? "bg-blue-50 text-blue-700 border border-blue-200/60"
+                          : "text-slate-700 hover:bg-slate-50"
+                      }`}
+                    >
+                      <div className="flex items-center gap-3">
+                        <div className="p-2 rounded-xl bg-sky-100/60 text-sky-600">
+                          <BookOpen className="w-4 h-4" />
+                        </div>
+                        <span>The Vehiql Magazine</span>
+                      </div>
+                      <ChevronRight className="w-4 h-4 text-slate-400" />
+                    </Link>
+
+                    <Link
+                      href="/careers"
+                      onClick={() => setOpen(false)}
+                      className={`flex items-center justify-between p-3 rounded-2xl text-xs font-bold transition-all ${
+                        pathname.startsWith("/careers")
+                          ? "bg-blue-50 text-blue-700 border border-blue-200/60"
+                          : "text-slate-700 hover:bg-slate-50"
+                      }`}
+                    >
+                      <div className="flex items-center gap-3">
+                        <div className="p-2 rounded-xl bg-purple-100/60 text-purple-600">
+                          <Briefcase className="w-4 h-4" />
+                        </div>
+                        <span>Careers & Openings</span>
+                      </div>
+                      <ChevronRight className="w-4 h-4 text-slate-400" />
+                    </Link>
+
+                    <Link
+                      href="/contact"
+                      onClick={() => setOpen(false)}
+                      className={`flex items-center justify-between p-3 rounded-2xl text-xs font-bold transition-all ${
+                        pathname === "/contact"
+                          ? "bg-blue-50 text-blue-700 border border-blue-200/60"
+                          : "text-slate-700 hover:bg-slate-50"
+                      }`}
+                    >
+                      <div className="flex items-center gap-3">
+                        <div className="p-2 rounded-xl bg-amber-100/60 text-amber-600">
+                          <PhoneCall className="w-4 h-4" />
+                        </div>
+                        <span>Contact Showroom</span>
                       </div>
                       <ChevronRight className="w-4 h-4 text-slate-400" />
                     </Link>

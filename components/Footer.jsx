@@ -115,7 +115,7 @@ export default function Footer() {
             </h4>
             <ul className="space-y-2 text-xs">
               <li>
-                <Link href="/contact" className="hover:text-blue-400 transition-colors">
+                <Link href="/about" className="hover:text-blue-400 transition-colors">
                   About Us
                 </Link>
               </li>
@@ -125,12 +125,7 @@ export default function Footer() {
                 </Link>
               </li>
               <li>
-                <Link href="/contact" className="hover:text-blue-400 transition-colors">
-                  Showroom Locations
-                </Link>
-              </li>
-              <li>
-                <Link href="/contact" className="hover:text-blue-400 transition-colors">
+                <Link href="/careers" className="hover:text-blue-400 transition-colors">
                   Careers
                 </Link>
               </li>

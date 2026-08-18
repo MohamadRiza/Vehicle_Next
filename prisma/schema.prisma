@@ -232,6 +232,59 @@ model Testimonial {
   updatedAt   DateTime @updatedAt
 }
 
+model JobPosting {
+  id           String           @id @default(uuid())
+  title        String
+  department   String           // "Sales & Concierge", "Engineering & AI", "Showroom Operations", "Marketing & Content", "Finance & Legal"
+  location     String           // "Colombo, Sri Lanka", "Remote", "New York, USA"
+  type         String           @default("Full-time") // "Full-time", "Part-time", "Contract", "Remote"
+  experience   String?          // "Entry-level", "Mid-Level (2-4 yrs)", "Senior Level (5+ yrs)"
+  salary       String?          // "$80k - $120k" or "Competitive + Commission"
+  description  String           @db.Text
+  requirements String?          @db.Text
+  benefits     String?          @db.Text
+  status       JobStatus        @default(OPEN)
+  applications JobApplication[]
+  createdAt    DateTime         @default(now())
+  updatedAt    DateTime         @updatedAt
+
+  @@index([department])
+  @@index([status])
+}
+
+enum JobStatus {
+  OPEN
+  CLOSED
+  DRAFT
+}
+
+model JobApplication {
+  id           String            @id @default(uuid())
+  jobId        String
+  job          JobPosting        @relation(fields: [jobId], references: [id], onDelete: Cascade)
+  userId       String?
+  name         String
+  email        String
+  phone        String?
+  resumeUrl    String?           // portfolio or resume link or uploaded file URL
+  resumeName   String?           // original file name
+  resumeType   String?           // file mime type (pdf, docx, image)
+  coverLetter  String?           @db.Text
+  status       ApplicationStatus @default(PENDING)
+  createdAt    DateTime          @default(now())
+  updatedAt    DateTime          @updatedAt
+
+  @@index([jobId])
+  @@index([status])
+}
+
+enum ApplicationStatus {
+  PENDING
+  REVIEWED
+  SHORTLISTED
+  REJECTED
+}
+
 
 
 
