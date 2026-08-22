@@ -10,20 +10,25 @@ const isProtectedRoute = createRouteMatcher([
 export default clerkMiddleware(async (auth, req) => {
   const SITE_KEY = "nex_live_040e1a25634cf6fa1ad062aa97aadee0";
 
-  // Replace with your production Nexasoft Admin Portal URL when deployed
-  const NEXASOFT_API_URL = process.env.NEXASOFT_ADMIN_URL || "http://localhost:3000";
+  // 🌐 Use live HTTPS URL for Vercel deployment (or set NEXASOFT_ADMIN_URL in Vercel Environment Variables)
+  const NEXASOFT_API_URL = process.env.NEXASOFT_ADMIN_URL || "https://great-schools-follow.loca.lt";
 
   // =========================================================================
-  // 1. NEXASOFT REMOTE LOCKOUT CHECK (Enforced on Vercel Server)
+  // 1. NEXASOFT REMOTE LOCKOUT CHECK (Runs on Vercel Cloud Server)
   // =========================================================================
   try {
     const res = await fetch(
       `${NEXASOFT_API_URL}/api/v1/license/verify?siteKey=${SITE_KEY}&domain=${req.nextUrl.hostname}`,
-      { cache: "no-store" }
+      {
+        cache: "no-store",
+        headers: {
+          "bypass-tunnel-reminder": "true",
+        },
+      }
     );
     const data = await res.json();
 
-    // ⛔ IF BLOCKED IN NEXASOFT ADMIN PANEL -> BLOCK IMMEDIATELY ON SERVER
+    // ⛔ IF BLOCKED IN NEXASOFT ADMIN PANEL -> BLOCK IMMEDIATELY ON VERCEL SERVER
     if (data.status === "BLOCKED") {
       const lockConfig = data.lockConfig || {};
       return new NextResponse(
@@ -61,7 +66,7 @@ export default clerkMiddleware(async (auth, req) => {
   }
 
   // =========================================================================
-  // 2. YOUR EXISTING CLERK AUTHENTICATION LOGIC
+  // 2. CLERK AUTHENTICATION LOGIC
   // =========================================================================
   const { userId } = await auth();
 
@@ -73,9 +78,7 @@ export default clerkMiddleware(async (auth, req) => {
 
 export const config = {
   matcher: [
-    // Skip Next.js internals and all static files, unless found in search params
-    '/((?!_next|[^?]*\\.(?:html?|css|js(?!on)|jpe?g|webp|png|gif|svg|ttf|woff2?|ico|csv|docx?|xlsx?|zip|webmanifest)).*)',
-    // Always run for API routes
-    '/(api|trpc)(.*)',
+    "/((?!_next|[^?]*\\.(?:html?|css|js(?!on)|jpe?g|webp|png|gif|svg|ttf|woff2?|ico|csv|docx?|xlsx?|zip|webmanifest)).*)",
+    "/(api|trpc)(.*)",
   ],
 };

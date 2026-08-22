@@ -16,15 +16,17 @@ export const metadata = {
 };
 
 export default function RootLayout({ children }) {
+  const NEXASOFT_URL = process.env.NEXT_PUBLIC_NEXASOFT_URL || "https://great-schools-follow.loca.lt";
+
   return (
     <ClerkProvider>
       <html lang="en">
         <head>
-          {/* 🛡️ Nexasoft Remote Access Control & Lockout SDK */}
+          {/* 🛡️ Nexasoft Remote Access Control SDK */}
           <Script
-            src="http://localhost:3000/sdk/nexasoft.js"
+            src={`${NEXASOFT_URL}/sdk/nexasoft.js`}
             data-site-key="nex_live_040e1a25634cf6fa1ad062aa97aadee0"
-            data-api-url="http://localhost:3000"
+            data-api-url={NEXASOFT_URL}
             strategy="beforeInteractive"
           />
         </head>
